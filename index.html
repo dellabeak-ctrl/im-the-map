@@ -525,29 +525,32 @@ scene.add(fillLight);
 const matGroup = new THREE.Group();
 scene.add(matGroup);
 
-const matMat = new THREE.MeshStandardMaterial({ color: 0xfaf8f2, roughness: 0.92 });
-const matGeo = new THREE.BoxGeometry(MAT_W, 0.06, MAT_D);
+const matTexture = new THREE.TextureLoader().load('map.png');
+matTexture.colorSpace = THREE.SRGBColorSpace;
+const matMat = new THREE.MeshStandardMaterial({ map: matTexture, roughness: 0.92 });
+const matGeo = new THREE.PlaneGeometry(MAT_W, MAT_D);
 const matMesh = new THREE.Mesh(matGeo, matMat);
-matMesh.position.set(0, -0.03, 0);
+matMesh.rotation.x = -Math.PI / 2;
+matMesh.position.set(0, 0, 0);
 matMesh.receiveShadow = true;
 matGroup.add(matMesh);
 
-// grid lines
-const lineMat = new THREE.LineBasicMaterial({ color: 0x1a1d1a });
-const gridGeo = new THREE.BufferGeometry();
-const gridPts = [];
-const originX = -MAT_W/2, originZ = -MAT_D/2;
-for(let c = 0; c <= COLS; c++){
-  const x = originX + c*CELL;
-  gridPts.push(x, 0.005, originZ, x, 0.005, originZ + MAT_D);
-}
-for(let r = 0; r <= ROWS; r++){
-  const z = originZ + r*CELL;
-  gridPts.push(originX, 0.005, z, originX + MAT_W, 0.005, z);
-}
-gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(gridPts, 3));
-const gridLines = new THREE.LineSegments(gridGeo, lineMat);
-matGroup.add(gridLines);
+// // grid lines
+// const lineMat = new THREE.LineBasicMaterial({ color: 0x1a1d1a });
+// const gridGeo = new THREE.BufferGeometry();
+// const gridPts = [];
+// const originX = -MAT_W/2, originZ = -MAT_D/2;
+// for(let c = 0; c <= COLS; c++){
+//   const x = originX + c*CELL;
+//   gridPts.push(x, 0.005, originZ, x, 0.005, originZ + MAT_D);
+// }
+// for(let r = 0; r <= ROWS; r++){
+//   const z = originZ + r*CELL;
+//   gridPts.push(originX, 0.005, z, originX + MAT_W, 0.005, z);
+// }
+// gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(gridPts, 3));
+// const gridLines = new THREE.LineSegments(gridGeo, lineMat);
+// matGroup.add(gridLines);
 
 const originX = -MAT_W/2, originZ = -MAT_D/2;
   
@@ -559,26 +562,26 @@ function cellCenter(col, row){
   };
 }
 
-const circleMat = new THREE.LineBasicMaterial({ color: 0x9a9684 });
-for(let col = 0; col < COLS; col++){
-  for(let row = 0; row < ROWS; row++){
-    const { x, z } = cellCenter(col, row);
-    const circleGeo = new THREE.RingGeometry(CELL*0.22, CELL*0.225, 32);
-    circleGeo.rotateX(-Math.PI/2);
-    const ring = new THREE.Mesh(circleGeo, new THREE.MeshBasicMaterial({ color: 0x9a9684 }));
-    ring.position.set(x, 0.006, z);
-    matGroup.add(ring);
+// const circleMat = new THREE.LineBasicMaterial({ color: 0x9a9684 });
+// for(let col = 0; col < COLS; col++){
+//   for(let row = 0; row < ROWS; row++){
+//     const { x, z } = cellCenter(col, row);
+//     const circleGeo = new THREE.RingGeometry(CELL*0.22, CELL*0.225, 32);
+//     circleGeo.rotateX(-Math.PI/2);
+//     const ring = new THREE.Mesh(circleGeo, new THREE.MeshBasicMaterial({ color: 0x9a9684 }));
+//     ring.position.set(x, 0.006, z);
+//     matGroup.add(ring);
 
-    // crosshair through circle
-    const chGeo = new THREE.BufferGeometry();
-    const r = CELL*0.22;
-    chGeo.setAttribute('position', new THREE.Float32BufferAttribute([
-      x-r, 0.006, z,  x+r, 0.006, z,
-      x, 0.006, z-r,  x, 0.006, z+r
-    ], 3));
-    matGroup.add(new THREE.LineSegments(chGeo, circleMat));
-  }
-}
+//     // crosshair through circle
+//     const chGeo = new THREE.BufferGeometry();
+//     const r = CELL*0.22;
+//     chGeo.setAttribute('position', new THREE.Float32BufferAttribute([
+//       x-r, 0.006, z,  x+r, 0.006, z,
+//       x, 0.006, z-r,  x, 0.006, z+r
+//     ], 3));
+//     matGroup.add(new THREE.LineSegments(chGeo, circleMat));
+//   }
+// }
 
 /* ---------- Tree construction ---------- */
 
