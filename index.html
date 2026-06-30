@@ -389,8 +389,8 @@ const MAT_D = ROWS * CELL;
 // Trees are permanently fixed to these cell coordinates (col, row), 0-indexed
 // matches the reference photo: col 1 and col 3 (0-indexed), middle row
 const TREE_CELLS = [
-  { col: 1, row: 1 },
-  { col: 3, row: 1 }
+  { col: 1.4, row: 1 },
+  { col: 2.6, row: 1 }
 ];
 
 // 8 branches per tree: 4 heights, 2 branches per height (180 deg apart)
@@ -650,10 +650,7 @@ function buildTree(col, row){
       branch.castShadow = true;
       pivot.add(branch);
 
-      // anchor point at the tip of the branch, where fruit will hang.
-      // tip is rotated to face outward along the branch's own axis so the
-      // "stem on the left, viewed head-on" rule reads correctly regardless
-      // of which way this height's pair of branches is rotated.
+      // tip is rotated to face outward along the branch's own axis so the "stem on the left side of the branch, when viewed head-on" reads correctly regardless of which way this height's pair of branches is rotated.
       const tip = new THREE.Group();
       tip.position.set(dx * BRANCH_LEN, y, dz * BRANCH_LEN);
       tip.rotation.y = -axisAngle - (sideSign === 1 ? 0 : Math.PI);
