@@ -20,6 +20,13 @@
     --radius: 10px;
   }
 
+  @font-face {
+    font-family: 'Agharti Black Semi Wide';
+    src: url('fonts/AghartiBlackSemiWide.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   *{ box-sizing: border-box; }
 
   html, body{
@@ -45,15 +52,15 @@
   }
 
   .brand{
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Agharti Black Semi Wide', Georgia, 'Times New Roman', serif;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 22px;
     letter-spacing: 0.5px;
     margin-right: 28px;
     padding-bottom: 12px;
     white-space: nowrap;
   }
-  .brand .accent{ color: var(--moss); }
+  .brand .accent{ color: var(--red); }
 
   .tabs{
     display:flex;
@@ -76,7 +83,7 @@
   }
   .tab[aria-selected="true"]{
     color: var(--ink);
-    border-bottom-color: var(--moss);
+    border-bottom-color: var(--red);
     font-weight: 700;
   }
   .tab:not([aria-selected="true"]):hover{ color: var(--ink); }
