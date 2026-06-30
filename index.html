@@ -549,6 +549,8 @@ gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(gridPts, 3));
 const gridLines = new THREE.LineSegments(gridGeo, lineMat);
 matGroup.add(gridLines);
 
+const originX = -MAT_W/2, originZ = -MAT_D/2;
+  
 // circle markers in each cell
 function cellCenter(col, row){
   return {
