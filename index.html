@@ -330,11 +330,152 @@
     text-align:center;
   }
  
-  @media (max-width: 860px){
-    main{ flex-direction: column; }
-    .panel{ width: 100%; border-left:none; border-top: 3px solid var(--ink); }
-    .viewport-wrap{ height: 50vh; }
+
+@media (max-width: 1100px) {
+  /* ---- Overall layout: stack vertically ---- */
+  main {
+    flex-direction: column;
   }
+
+  /* ---- Topbar: tighten everything up ---- */
+  .topbar {
+    padding: 10px 12px 0 12px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .topbar img {
+    height: 28px;
+    width: auto;
+  }
+
+  .brand {
+    font-size: 13px;
+    margin-right: 10px;
+    padding-bottom: 8px;
+    white-space: nowrap;
+  }
+
+  .tabs {
+    gap: 2px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    font-size: 10px;
+    padding: 6px 10px 8px 10px;
+    white-space: nowrap;
+  }
+
+  .lang-toggle {
+    font-size: 10px;
+    padding: 4px 8px;
+    margin-left: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* ---- 3D viewport ---- */
+  .viewport-wrap {
+    height: 52vh;
+    min-height: 280px;
+  }
+
+  .mode-badge {
+    font-size: 9px;
+    padding: 4px 8px;
+    top: 8px;
+    left: 8px;
+  }
+
+  .viewport-hint {
+    font-size: 9px;
+    padding: 4px 8px;
+    bottom: 8px;
+    left: 8px;
+  }
+
+  /* ---- Panel: full width, scrollable ---- */
+  .panel {
+    width: 100%;
+    border-left: none;
+    border-top: 3px solid var(--ink);
+    max-height: 48vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .panel-section {
+    padding: 14px 16px;
+  }
+
+  .panel-section h2 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  /* ---- Buttons: big and tappable ---- */
+  .btn {
+    font-size: 13px;
+    padding: 14px 14px;
+    min-height: 56px;
+  }
+
+  .btn-sub {
+    font-size: 10px;
+  }
+
+  /* ---- Branch grid ---- */
+  .branch-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .branch-slot {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+
+  /* ---- Readout text ---- */
+  .readout {
+    font-size: 11px;
+  }
+
+  .readout-row {
+    padding: 4px 0;
+  }
+
+  .tree-block-title {
+    font-size: 10px;
+  }
+}
+
+/* ---- Extra small phones (iPhone SE, etc.) ---- */
+@media (max-width: 390px) {
+  .brand {
+    font-size: 11px;
+  }
+
+  .tab {
+    font-size: 9px;
+    padding: 5px 8px 7px 8px;
+  }
+
+  .branch-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .viewport-wrap {
+    height: 45vh;
+  }
+}
+
+
+  
 </style>
 </head>
 <body>
