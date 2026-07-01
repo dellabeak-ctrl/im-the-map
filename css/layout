@@ -1,0 +1,143 @@
+//for the page layout (top bar, side bar, etc.)
+
+:root {
+  --ink: #1a1d1a;
+  --paper: #f7f5ef;
+  --panel: #ffffff;
+  --line: #d8d4c8;
+  --moss: #2f5d3a;
+  --moss-deep: #1f3f28;
+  --bark: #8a6a45;
+  --yellow: #e8c84a;
+  --red: #c2402f;
+  --green: #2f8f5b;
+  --focus: #2f5d3a;
+  --radius: 10px;
+}
+ 
+@font-face {
+  font-family: 'Qhytsdakx';
+  src: url('../fonts/qhyts___.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+ 
+* { box-sizing: border-box; }
+ 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Courier New', ui-monospace, Menlo, Consolas, monospace;
+}
+ 
+body {
+  display: flex;
+  flex-direction: column;
+}
+ 
+/* ---------- Top bar / tabs ---------- */
+.topbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 18px 24px 0 24px;
+  background: var(--paper);
+  border-bottom: 3px solid var(--ink);
+}
+ 
+.brand {
+  font-family: 'Qhytsdakx', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: 33px;
+  letter-spacing: 0.5px;
+  margin-right: 28px;
+  padding-bottom: 12px;
+  white-space: nowrap;
+}
+.brand .accent { color: var(--red); }
+ 
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+ 
+.header-logo {
+  height: 52px;
+  width: auto;
+  margin-left: auto;
+  margin-right: -8px;
+}
+ 
+/* ---------- Main layout ---------- */
+main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+ 
+/* ---------- 3D Viewport ---------- */
+.viewport-wrap {
+  flex: 1;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 20%, #eef0e6 0%, #e2e4d6 60%, #d6d8c6 100%);
+  min-width: 0;
+}
+ 
+#canvas-host {
+  position: absolute;
+  inset: 0;
+}
+ 
+.viewport-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  font-size: 11px;
+  color: #6b6a5e;
+  background: rgba(247, 245, 239, 0.85);
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  pointer-events: none;
+}
+ 
+.mode-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+}
+ 
+/* ---------- Side panel ---------- */
+.panel {
+  width: 360px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-left: 3px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+ 
+.panel-section {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--line);
+}
+ 
+footer {
+  padding: 14px 22px;
+  font-size: 10.5px;
+  color: #8a8678;
+  text-align: center;
+}
+ 
