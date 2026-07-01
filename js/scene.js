@@ -100,7 +100,7 @@ function buildTree(col, row) {
  
   // Base block
   const baseSize   = 0.5;
-  const baseHeight = 0.15;
+  const baseHeight = 0.40;
   const base = new THREE.Mesh(
     new THREE.BoxGeometry(baseSize, baseHeight, baseSize),
     baseMat
