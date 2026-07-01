@@ -545,7 +545,7 @@ scene.add(fillLight);
 const matGroup = new THREE.Group();
 scene.add(matGroup);
 
-const matTexture = new THREE.TextureLoader().load('map.png');
+const matTexture = new THREE.TextureLoader().load('images/map.png');
 matTexture.colorSpace = THREE.SRGBColorSpace;
 const matMat = new THREE.MeshStandardMaterial({ map: matTexture, roughness: 0.92 });
 const matGeo = new THREE.PlaneGeometry(MAT_W, MAT_D);
