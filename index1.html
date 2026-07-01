@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Element Randomizer — Regionals 2027</title>
+ 
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+ 
+  <!-- ===== Top bar ===== -->
+  <div class="topbar">
+    <div class="brand">ELEMENT <span class="accent">RANDOMIZER</span></div>
+    <div class="tabs" role="tablist" aria-label="Challenge games">
+      <button class="tab" role="tab" aria-selected="true" id="tab-TheRipeningQuest">The Ripening Quest</button>
+      <button class="tab" role="tab" aria-selected="false" disabled title="Coming soon">Game 2</button>
+      <button class="tab" role="tab" aria-selected="false" disabled title="Coming soon">Game 3</button>
+    </div>
+    <img src="images/logo.png" alt="Zone01 Logo" class="header-logo">
+  </div>
+ 
+  <!-- ===== Main area ===== -->
+  <main>
+ 
+    <!-- 3D Viewport -->
+    <div class="viewport-wrap">
+      <div class="mode-badge">The Ripening Quest — Field View</div>
+      <div id="canvas-host"></div>
+      <div class="viewport-hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+    </div>
+ 
+    <!-- Control panel -->
+    <aside class="panel">
+ 
+      <div class="panel-section">
+        <h2><span class="dot" style="background:var(--bark)"></span>Tree Orientation</h2>
+        <div class="btn-row">
+          <button class="btn orientation" id="btn-orientation">
+            <span>
+              Randomize Orientation
+              <span class="btn-sub">Rotates both trees together · 0° / 90° / 180° / 270°</span>
+            </span>
+            <span class="arrow">↻</span>
+          </button>
+        </div>
+      </div>
+ 
+      <div class="panel-section">
+        <h2><span class="dot" style="background:var(--moss)"></span>Fruit Placement</h2>
+        <div class="btn-row">
+          <button class="btn fruit" id="btn-fruit">
+            <span>
+              Randomize Fruit
+              <span class="btn-sub">≥1 red/yellow per height · green doubles one height</span>
+            </span>
+            <span class="arrow">↻</span>
+          </button>
+        </div>
+      </div>
+ 
+      <div class="panel-section" style="flex:1;">
+        <h2><span class="dot"></span>Current State</h2>
+        <div class="readout">
+          <div class="readout-row">
+            <span class="readout-label">Tree angle (both trees)</span>
+            <span class="readout-value" id="readout-angle">0°</span>
+          </div>
+        </div>
+        <div class="tree-block">
+          <div class="tree-block-title">Branch assignment (applies to both trees)</div>
+          <div class="branch-grid" id="branch-readout"></div>
+        </div>
+        <button class="reset-link" id="btn-reset">Reset to default layout</button>
+      </div>
+ 
+      <footer>The Ripening Quest · Round configuration tool</footer>
+ 
+    </aside>
+  </main>
+ 
+  <!-- ===== Three.js import map ===== -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+ 
+  <!-- ===== JS: load in dependency order ===== -->
+  <!--
+    Load order matters:
+    1. constants  — defines COLS, ROWS, CELL, TREE_CELLS, etc.
+    2. state      — depends on constants (array sizes)
+    3. scene      — depends on constants + state; exposes applyTreeAngle/applyFruitAssignment
+    4. randomize  — depends on constants, state, scene, ui
+    5. ui         — depends on constants, state, randomize; wires buttons + calls updateReadout
+  -->
+  <script src="js/constants.js"></script>
+  <script src="js/state.js"></script>
+  <script type="module" src="js/scene.js"></script>
+  <script src="js/randomize.js"></script>
+  <script src="js/ui.js"></script>
+ 
+</body>
+</html>
+ 
