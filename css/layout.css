@@ -1,0 +1,47 @@
+/* ============================================================
+   LAYOUT — main flex row, 3D viewport, badge, hint
+   ============================================================ */
+
+main{
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.viewport-wrap{
+  flex: 1;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 20%, #eef0e6 0%, #e2e4d6 60%, #d6d8c6 100%);
+  min-width: 0;
+}
+
+#canvas-host{
+  position:absolute; inset:0;
+}
+
+.viewport-hint{
+  position:absolute;
+  bottom: 14px;
+  left: 14px;
+  font-size: 11px;
+  color: #6b6a5e;
+  background: rgba(247,245,239,0.85);
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  pointer-events: none;
+}
+
+.mode-badge{
+  position:absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+}
