@@ -440,6 +440,23 @@
     padding: 4px 6px;
   }
 
+
+  .checkbox-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size: 12.5px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.checkbox-row input[type="checkbox"]{
+  width: 15px; height: 15px;
+  accent-color: var(--moss);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
   /* ---- Readout text ---- */
   .readout {
     font-size: 11px;
@@ -497,17 +514,20 @@
     <div id="canvas-host"></div>
     <div class="viewport-hint" id="hint-controls">drag to orbit · scroll to zoom · right-drag to pan</div>
   </div>
- 
-  <aside class="panel">
-    <div class="panel-section">
-      <h2><span class="dot" style="background:var(--bark)"></span><span id="h2-orientation">Tree Orientation</span></h2>
-      <div class="btn-row">
-        <button class="btn orientation" id="btn-orientation">
-          <span id="btn-orientation-label">Randomize Orientation<span class="btn-sub" id="btn-orientation-sub">Rotates both trees together · 0° / 90° / 180° / 270°</span></span>
-          <span class="arrow">↻</span>
-        </button>
-      </div>
-    </div>
+
+
+  <div class="panel-section">
+  <h2><span class="dot" style="background:var(--bark)"></span><span id="h2-orientation">Tree Orientation</span></h2>
+  <label class="checkbox-row" for="chk-independent">
+    <input type="checkbox" id="chk-independent">
+    <span id="label-independent">Randomize trees independently</span>
+  </label>
+  <div class="btn-row">
+    <button class="btn orientation" id="btn-orientation">
+      <span id="btn-orientation-label">Randomize Orientation<span class="btn-sub" id="btn-orientation-sub">Rotates both trees together · 0° / 90° / 180° / 270°</span></span>
+      <span class="arrow">↻</span>
+    </button>
+  </div>
  
     <div class="panel-section">
       <h2><span class="dot" style="background:var(--moss)"></span><span id="h2-fruit">Fruit Placement</span></h2>
@@ -519,14 +539,20 @@
       </div>
     </div>
  
-    <div class="panel-section" style="flex:1;">
+    <!-- <div class="panel-section" style="flex:1;">
       <h2><span class="dot"></span><span id="h2-state">Current State</span></h2>
       <div class="readout">
         <div class="readout-row">
           <span class="readout-label" id="label-angle">Tree angle (both trees)</span>
           <span class="readout-value" id="readout-angle">0°</span>
         </div>
-      </div>
+      </div> -->
+
+    <div class="panel-section" style="flex:1;">
+      <h2><span class="dot"></span><span id="h2-state">Current State</span></h2>
+      <div id="state-readout"></div>
+      <button class="reset-link" id="btn-reset">Reset to default layout</button>
+    </div>
  
       <div class="tree-block">
         <div class="tree-block-title" id="label-branch-title">Branch assignment (applies to both trees)</div>
@@ -580,6 +606,7 @@ const TRANSLATIONS = {
     colorGreen:      'Green',
     empty:           'empty',
     langBtn:         'FR',
+    labelIndependent: 'Randomize trees independently',
   },
   fr: {
     tabGame1:        'Titre Francaise ..?',
@@ -603,6 +630,7 @@ const TRANSLATIONS = {
     colorGreen:      'Vert',
     empty:           'vide',
     langBtn:         'EN',
+    labelIndependent: 'Randomiser les arbres indépendamment',
   }
 };
  
@@ -634,6 +662,7 @@ function setLanguage(lang){
   document.getElementById('btn-reset').textContent         = t.btnReset;
   document.getElementById('footer-text').textContent       = t.footer;
   document.getElementById('btn-lang').textContent          = t.langBtn;
+  document.getElementById('label-independent').textContent = t.labelIndependent;
  
   // Re-render the branch readout in the new language
   updateReadout();
@@ -666,47 +695,44 @@ const FRUIT_POOL = ['yellow','yellow','red','red','green'];
    STATE
    ============================================================ */
  
-const state = {
-  treeAngle: 0,
-  branchAssignment: new Array(8).fill(null)
-};
+// const state = {
+//   treeAngle: 0,
+//   branchAssignment: new Array(8).fill(null)
+// };
  
+// function defaultBranchAssignment(){
+//   return new Array(8).fill(null);
+// }
+// state.branchAssignment = defaultBranchAssignment();
+
+  const state = {
+  independent: false,
+  treeAngles: [0, 0],
+  branchAssignments: [null, null]
+};
+
 function defaultBranchAssignment(){
   return new Array(8).fill(null);
 }
-state.branchAssignment = defaultBranchAssignment();
- 
+state.branchAssignments = [defaultBranchAssignment(), defaultBranchAssignment()];
+
+  
 /* ============================================================
    RANDOMIZATION LOGIC
    ============================================================ */
  
 function randomizeOrientation(){
   const options = [0, 90, 180, 270];
-  state.treeAngle = options[Math.floor(Math.random() * options.length)];
+  if(state.independent){
+    state.treeAngles = trees.map(() => options[Math.floor(Math.random() * options.length)]);
+  } else {
+    const angle = options[Math.floor(Math.random() * options.length)];
+    state.treeAngles = [angle, angle];
+  }
   applyTreeAngle();
   updateReadout();
 }
  
-function randomizeFruit(){
-  const redYellow = ['yellow', 'yellow', 'red', 'red'];
-  shuffleInPlace(redYellow);
- 
-  const next = new Array(8).fill(null);
- 
-  for(let h = 0; h < 4; h++){
-    const side = Math.random() < 0.5 ? 0 : 1;
-    next[h*2 + side] = redYellow[h];
-  }
- 
-  const greenHeight = Math.floor(Math.random() * 4);
-  const occupiedSide = next[greenHeight*2] !== null ? 0 : 1;
-  const openSide = occupiedSide === 0 ? 1 : 0;
-  next[greenHeight*2 + openSide] = 'green';
- 
-  state.branchAssignment = next;
-  applyFruitAssignment();
-  updateReadout();
-}
  
 function shuffleInPlace(arr){
   for(let i = arr.length - 1; i > 0; i--){
@@ -714,14 +740,45 @@ function shuffleInPlace(arr){
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 }
- 
+
+
+function generateFruitAssignment(){
+  const redYellow = ['yellow', 'yellow', 'red', 'red'];
+  shuffleInPlace(redYellow);
+
+  const next = new Array(8).fill(null);
+  for(let h = 0; h < 4; h++){
+    const side = Math.random() < 0.5 ? 0 : 1;
+    next[h*2 + side] = redYellow[h];
+  }
+
+  const greenHeight = Math.floor(Math.random() * 4);
+  const occupiedSide = next[greenHeight*2] !== null ? 0 : 1;
+  const openSide = occupiedSide === 0 ? 1 : 0;
+  next[greenHeight*2 + openSide] = 'green';
+
+  return next;
+}
+
+function randomizeFruit(){
+  if(state.independent){
+    state.branchAssignments = trees.map(() => generateFruitAssignment());
+  } else {
+    const assignment = generateFruitAssignment();
+    state.branchAssignments = [assignment.slice(), assignment.slice()];
+  }
+  applyFruitAssignment();
+  updateReadout();
+}
+
 function resetAll(){
-  state.treeAngle = 0;
-  state.branchAssignment = defaultBranchAssignment();
+  state.treeAngles = [0, 0];
+  state.branchAssignments = [defaultBranchAssignment(), defaultBranchAssignment()];
   applyTreeAngle();
   applyFruitAssignment();
   updateReadout();
 }
+
  
 /* ============================================================
    THREE.JS SCENE SETUP
@@ -900,13 +957,14 @@ function makeFruitMesh(color){
 }
  
 function applyFruitAssignment(){
-  trees.forEach(tree => {
+  trees.forEach((tree, i) => {
+    const assignment = state.branchAssignments[i];
     tree.branchSlots.forEach(slot => {
       if(slot.fruitMesh){
         slot.tip.remove(slot.fruitMesh);
         slot.fruitMesh = null;
       }
-      const color = state.branchAssignment[slot.index];
+      const color = assignment[slot.index];
       if(color){
         const mesh = makeFruitMesh(color);
         slot.tip.add(mesh);
@@ -915,10 +973,10 @@ function applyFruitAssignment(){
     });
   });
 }
- 
+
 function applyTreeAngle(){
-  trees.forEach(tree => {
-    tree.pivot.rotation.y = THREE.MathUtils.degToRad(state.treeAngle);
+  trees.forEach((tree, i) => {
+    tree.pivot.rotation.y = THREE.MathUtils.degToRad(state.treeAngles[i]);
   });
 }
  
@@ -949,15 +1007,42 @@ animate();
    UI WIRING
    ============================================================ */
  
-function updateReadout(){
-  const t = TRANSLATIONS[currentLang];
-  document.getElementById('readout-angle').textContent = state.treeAngle + '°';
+// function updateReadout(){
+//   const t = TRANSLATIONS[currentLang];
+//   document.getElementById('readout-angle').textContent = state.treeAngle + '°';
  
-  const wrap = document.getElementById('branch-readout');
-  wrap.innerHTML = '';
+//   const wrap = document.getElementById('branch-readout');
+//   wrap.innerHTML = '';
+//   const sideLabels = ['A', 'B'];
+ 
+//   state.branchAssignment.forEach((color, idx) => {
+//     const heightIdx = Math.floor(idx/2);
+//     const sideIdx = idx % 2;
+//     const slot = document.createElement('div');
+//     slot.className = 'branch-slot';
+//     const swatch = document.createElement('span');
+//     swatch.className = 'swatch ' + (color || 'empty');
+//     slot.appendChild(swatch);
+//     const label = document.createElement('span');
+//     const colorName = color
+//       ? (color === 'yellow' ? t.colorYellow : color === 'red' ? t.colorRed : t.colorGreen)
+//       : t.empty;
+//     label.textContent = `H${heightIdx+1}${sideLabels[sideIdx]} · ${colorName}`;
+//     slot.appendChild(label);
+//     wrap.appendChild(slot);
+//   });
+// }
+
+  function colorName(t, color){
+  if(!color) return t.empty;
+  return color === 'yellow' ? t.colorYellow : color === 'red' ? t.colorRed : t.colorGreen;
+}
+
+function buildBranchGrid(assignment, t){
+  const grid = document.createElement('div');
+  grid.className = 'branch-grid';
   const sideLabels = ['A', 'B'];
- 
-  state.branchAssignment.forEach((color, idx) => {
+  assignment.forEach((color, idx) => {
     const heightIdx = Math.floor(idx/2);
     const sideIdx = idx % 2;
     const slot = document.createElement('div');
@@ -966,18 +1051,64 @@ function updateReadout(){
     swatch.className = 'swatch ' + (color || 'empty');
     slot.appendChild(swatch);
     const label = document.createElement('span');
-    const colorName = color
-      ? (color === 'yellow' ? t.colorYellow : color === 'red' ? t.colorRed : t.colorGreen)
-      : t.empty;
-    label.textContent = `H${heightIdx+1}${sideLabels[sideIdx]} · ${colorName}`;
+    label.textContent = `H${heightIdx+1}${sideLabels[sideIdx]} · ${colorName(t, color)}`;
     slot.appendChild(label);
-    wrap.appendChild(slot);
+    grid.appendChild(slot);
   });
+  return grid;
+}
+
+function updateReadout(){
+  const t = TRANSLATIONS[currentLang];
+  const wrap = document.getElementById('state-readout');
+  wrap.innerHTML = '';
+
+  if(state.independent){
+    trees.forEach((tree, i) => {
+      const angleRow = document.createElement('div');
+      angleRow.className = 'readout';
+      angleRow.innerHTML = `
+        <div class="readout-row">
+          <span class="readout-label">${t.labelAngle.replace(/\s*\(.*\)$/, '')} — ${i+1}</span>
+          <span class="readout-value">${state.treeAngles[i]}°</span>
+        </div>`;
+      wrap.appendChild(angleRow);
+
+      const title = document.createElement('div');
+      title.className = 'tree-block-title';
+      title.style.marginTop = '10px';
+      title.textContent = `${t.labelBranch.split('(')[0].trim()} — ${i+1}`;
+      wrap.appendChild(title);
+
+      wrap.appendChild(buildBranchGrid(state.branchAssignments[i], t));
+    });
+  } else {
+    const angleRow = document.createElement('div');
+    angleRow.className = 'readout';
+    angleRow.innerHTML = `
+      <div class="readout-row">
+        <span class="readout-label">${t.labelAngle}</span>
+        <span class="readout-value">${state.treeAngles[0]}°</span>
+      </div>`;
+    wrap.appendChild(angleRow);
+
+    const title = document.createElement('div');
+    title.className = 'tree-block-title';
+    title.style.marginTop = '10px';
+    title.textContent = t.labelBranch;
+    wrap.appendChild(title);
+
+    wrap.appendChild(buildBranchGrid(state.branchAssignments[0], t));
+  }
 }
  
 document.getElementById('btn-orientation').addEventListener('click', randomizeOrientation);
 document.getElementById('btn-fruit').addEventListener('click', randomizeFruit);
 document.getElementById('btn-reset').addEventListener('click', resetAll);
+document.getElementById('chk-independent').addEventListener('change', (e) => {
+  state.independent = e.target.checked;
+  updateReadout();
+});
  
 updateReadout();
 </script>
