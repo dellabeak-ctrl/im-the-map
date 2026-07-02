@@ -1,0 +1,47 @@
+/* ============================================================
+   BASE: variables, font, resets, page skeleton
+   ============================================================ */
+
+:root{
+  --ink: #1a1d1a;
+  --paper: #f7f5ef;
+  --panel: #ffffff;
+  --line: #d8d4c8;
+  --moss: #2f5d3a;
+  --moss-deep: #1f3f28;
+  --bark: #8a6a45;
+  --yellow: #e8c84a;
+  --red: #c2402f;
+  --green: #2f8f5b;
+  --focus: #2f5d3a;
+  --radius: 10px;
+}
+
+@font-face {
+  font-family: 'Qhytsdakx';
+  /* NOTE: this path is relative to THIS CSS FILE, not to index.html */
+  src: url('../fonts/qhyts___.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+*{ box-sizing: border-box; }
+
+html, body{
+  margin:0; padding:0; height:100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Courier New', ui-monospace, Menlo, Consolas, monospace;
+}
+
+body{
+  display:flex;
+  flex-direction:column;
+}
+
+footer{
+  padding: 14px 22px;
+  font-size: 10.5px;
+  color: #8a8678;
+  text-align:center;
+}
