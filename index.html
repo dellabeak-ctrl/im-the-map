@@ -206,6 +206,22 @@
     display:inline-block;
   }
  
+  .checkbox-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size: 12.5px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checkbox-row input[type="checkbox"]{
+    width: 15px; height: 15px;
+    accent-color: var(--moss);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+ 
   .btn-row{
     display:flex;
     flex-direction: column;
@@ -330,14 +346,12 @@
     text-align:center;
   }
  
-
+ 
 @media (max-width: 1100px) {
-  /* ---- Overall layout: stack vertically ---- */
   main {
     flex-direction: column;
   }
-
-  /* ---- Topbar: tighten everything up ---- */
+ 
   .topbar {
     padding: 10px 12px 0 12px;
     flex-wrap: nowrap;
@@ -345,19 +359,19 @@
     gap: 6px;
     align-items: center;
   }
-
+ 
   .topbar img {
     height: 28px;
     width: auto;
   }
-
+ 
   .brand {
     font-size: 13px;
     margin-right: 10px;
     padding-bottom: 8px;
     white-space: nowrap;
   }
-
+ 
   .tabs {
     gap: 2px;
     overflow-x: auto;
@@ -365,41 +379,39 @@
     scrollbar-width: none;
   }
   .tabs::-webkit-scrollbar { display: none; }
-
+ 
   .tab {
     font-size: 10px;
     padding: 6px 10px 8px 10px;
     white-space: nowrap;
   }
-
+ 
   .lang-toggle {
     font-size: 10px;
     padding: 4px 8px;
     margin-left: 6px;
     margin-bottom: 8px;
   }
-
-  /* ---- 3D viewport ---- */
+ 
   .viewport-wrap {
     height: 52vh;
     min-height: 280px;
   }
-
+ 
   .mode-badge {
     font-size: 9px;
     padding: 4px 8px;
     top: 8px;
     left: 8px;
   }
-
+ 
   .viewport-hint {
     font-size: 9px;
     padding: 4px 8px;
     bottom: 8px;
     left: 8px;
   }
-
-  /* ---- Panel: full width, scrollable ---- */
+ 
   .panel {
     width: 100%;
     border-left: none;
@@ -408,91 +420,68 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-
+ 
   .panel-section {
     padding: 14px 16px;
   }
-
+ 
   .panel-section h2 {
     font-size: 13px;
     margin-bottom: 10px;
   }
-
-  /* ---- Buttons: big and tappable ---- */
+ 
   .btn {
     font-size: 13px;
     padding: 14px 14px;
     min-height: 56px;
   }
-
+ 
   .btn-sub {
     font-size: 10px;
   }
-
-  /* ---- Branch grid ---- */
+ 
   .branch-grid {
     grid-template-columns: 1fr 1fr;
     gap: 4px;
   }
-
+ 
   .branch-slot {
     font-size: 10px;
     padding: 4px 6px;
   }
-
-
-  .checkbox-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size: 12.5px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  user-select: none;
-}
-.checkbox-row input[type="checkbox"]{
-  width: 15px; height: 15px;
-  accent-color: var(--moss);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-  /* ---- Readout text ---- */
+ 
   .readout {
     font-size: 11px;
   }
-
+ 
   .readout-row {
     padding: 4px 0;
   }
-
+ 
   .tree-block-title {
     font-size: 10px;
   }
 }
-
-/* ---- Extra small phones (iPhone SE, etc.) ---- */
+ 
 @media (max-width: 390px) {
   .brand {
     font-size: 11px;
   }
-
+ 
   .tab {
     font-size: 9px;
     padding: 5px 8px 7px 8px;
   }
-
+ 
   .branch-grid {
     grid-template-columns: 1fr;
   }
-
+ 
   .viewport-wrap {
     height: 45vh;
   }
 }
-
-
-  
+ 
 </style>
 </head>
 <body>
@@ -514,20 +503,21 @@
     <div id="canvas-host"></div>
     <div class="viewport-hint" id="hint-controls">drag to orbit · scroll to zoom · right-drag to pan</div>
   </div>
-
-
-  <div class="panel-section">
-  <h2><span class="dot" style="background:var(--bark)"></span><span id="h2-orientation">Tree Orientation</span></h2>
-  <label class="checkbox-row" for="chk-independent">
-    <input type="checkbox" id="chk-independent">
-    <span id="label-independent">Randomize trees independently</span>
-  </label>
-  <div class="btn-row">
-    <button class="btn orientation" id="btn-orientation">
-      <span id="btn-orientation-label">Randomize Orientation<span class="btn-sub" id="btn-orientation-sub">Rotates both trees together · 0° / 90° / 180° / 270°</span></span>
-      <span class="arrow">↻</span>
-    </button>
-  </div>
+ 
+  <aside class="panel">
+    <div class="panel-section">
+      <h2><span class="dot" style="background:var(--bark)"></span><span id="h2-orientation">Tree Orientation</span></h2>
+      <label class="checkbox-row" for="chk-independent">
+        <input type="checkbox" id="chk-independent">
+        <span id="label-independent">Randomize trees independently</span>
+      </label>
+      <div class="btn-row">
+        <button class="btn orientation" id="btn-orientation">
+          <span id="btn-orientation-label">Randomize Orientation<span class="btn-sub" id="btn-orientation-sub">Rotates both trees together · 0° / 90° / 180° / 270°</span></span>
+          <span class="arrow">↻</span>
+        </button>
+      </div>
+    </div>
  
     <div class="panel-section">
       <h2><span class="dot" style="background:var(--moss)"></span><span id="h2-fruit">Fruit Placement</span></h2>
@@ -539,26 +529,9 @@
       </div>
     </div>
  
-    <!-- <div class="panel-section" style="flex:1;">
-      <h2><span class="dot"></span><span id="h2-state">Current State</span></h2>
-      <div class="readout">
-        <div class="readout-row">
-          <span class="readout-label" id="label-angle">Tree angle (both trees)</span>
-          <span class="readout-value" id="readout-angle">0°</span>
-        </div>
-      </div> -->
-
     <div class="panel-section" style="flex:1;">
       <h2><span class="dot"></span><span id="h2-state">Current State</span></h2>
       <div id="state-readout"></div>
-      <button class="reset-link" id="btn-reset">Reset to default layout</button>
-    </div>
- 
-      <div class="tree-block">
-        <div class="tree-block-title" id="label-branch-title">Branch assignment (applies to both trees)</div>
-        <div class="branch-grid" id="branch-readout"></div>
-      </div>
- 
       <button class="reset-link" id="btn-reset">Reset to default layout</button>
     </div>
  
@@ -599,6 +572,9 @@ const TRANSLATIONS = {
     h2State:         'Current State',
     labelAngle:      'Tree angle (both trees)',
     labelBranch:     'Branch assignment (applies to both trees)',
+    labelAngleTree:  'Tree angle — Tree',
+    labelBranchTree: 'Branch assignment — Tree',
+    labelIndependent:'Randomize trees independently',
     btnReset:        'Reset',
     footer:          'Orchard · configuration tool',
     colorYellow:     'Yellow',
@@ -606,7 +582,6 @@ const TRANSLATIONS = {
     colorGreen:      'Green',
     empty:           'empty',
     langBtn:         'FR',
-    labelIndependent: 'Randomize trees independently',
   },
   fr: {
     tabGame1:        'Titre Francaise ..?',
@@ -623,6 +598,9 @@ const TRANSLATIONS = {
     h2State:         'État actuel',
     labelAngle:      'Angle des arbres (les deux)',
     labelBranch:     'Attribution des branches (les deux arbres)',
+    labelAngleTree:  "Angle de l'arbre — Arbre",
+    labelBranchTree: 'Attribution des branches — Arbre',
+    labelIndependent:'Randomiser les arbres indépendamment',
     btnReset:        'Réinitialiser',
     footer:          'Verger · outil de configuration de manche',
     colorYellow:     'Jaune',
@@ -630,7 +608,6 @@ const TRANSLATIONS = {
     colorGreen:      'Vert',
     empty:           'vide',
     langBtn:         'EN',
-    labelIndependent: 'Randomiser les arbres indépendamment',
   }
 };
  
@@ -642,7 +619,6 @@ function setLanguage(lang){
   document.documentElement.lang = lang;
  
   document.getElementById('tab-TheRipeningQuest').textContent = t.tabGame1;
-  // Game 2 and 3 tabs — preserve the disabled state, just update text
   const tabs = document.querySelectorAll('.tab[disabled]');
   tabs[0].textContent = t.tabGame2;
   tabs[1].textContent = t.tabGame3;
@@ -650,21 +626,17 @@ function setLanguage(lang){
   document.getElementById('badge-mode').textContent        = t.badge;
   document.getElementById('hint-controls').textContent     = t.hint;
   document.getElementById('h2-orientation').textContent    = t.h2Orientation;
+  document.getElementById('label-independent').textContent = t.labelIndependent;
   document.getElementById('btn-orientation-sub').textContent = t.btnOrientSub;
-  // Update button label text node only (not the sub span)
   document.getElementById('btn-orientation-label').childNodes[0].textContent = t.btnOrientation;
   document.getElementById('h2-fruit').textContent          = t.h2Fruit;
   document.getElementById('btn-fruit-sub').textContent     = t.btnFruitSub;
   document.getElementById('btn-fruit-label').childNodes[0].textContent = t.btnFruit;
   document.getElementById('h2-state').textContent          = t.h2State;
-  document.getElementById('label-angle').textContent       = t.labelAngle;
-  document.getElementById('label-branch-title').textContent = t.labelBranch;
   document.getElementById('btn-reset').textContent         = t.btnReset;
   document.getElementById('footer-text').textContent       = t.footer;
   document.getElementById('btn-lang').textContent          = t.langBtn;
-  document.getElementById('label-independent').textContent = t.labelIndependent;
  
-  // Re-render the branch readout in the new language
   updateReadout();
 }
  
@@ -695,28 +667,17 @@ const FRUIT_POOL = ['yellow','yellow','red','red','green'];
    STATE
    ============================================================ */
  
-// const state = {
-//   treeAngle: 0,
-//   branchAssignment: new Array(8).fill(null)
-// };
- 
-// function defaultBranchAssignment(){
-//   return new Array(8).fill(null);
-// }
-// state.branchAssignment = defaultBranchAssignment();
-
-  const state = {
+const state = {
   independent: false,
   treeAngles: [0, 0],
   branchAssignments: [null, null]
 };
-
+ 
 function defaultBranchAssignment(){
   return new Array(8).fill(null);
 }
 state.branchAssignments = [defaultBranchAssignment(), defaultBranchAssignment()];
-
-  
+ 
 /* ============================================================
    RANDOMIZATION LOGIC
    ============================================================ */
@@ -733,33 +694,24 @@ function randomizeOrientation(){
   updateReadout();
 }
  
- 
-function shuffleInPlace(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i+1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
-
 function generateFruitAssignment(){
   const redYellow = ['yellow', 'yellow', 'red', 'red'];
   shuffleInPlace(redYellow);
-
+ 
   const next = new Array(8).fill(null);
   for(let h = 0; h < 4; h++){
     const side = Math.random() < 0.5 ? 0 : 1;
     next[h*2 + side] = redYellow[h];
   }
-
+ 
   const greenHeight = Math.floor(Math.random() * 4);
   const occupiedSide = next[greenHeight*2] !== null ? 0 : 1;
   const openSide = occupiedSide === 0 ? 1 : 0;
   next[greenHeight*2 + openSide] = 'green';
-
+ 
   return next;
 }
-
+ 
 function randomizeFruit(){
   if(state.independent){
     state.branchAssignments = trees.map(() => generateFruitAssignment());
@@ -770,7 +722,14 @@ function randomizeFruit(){
   applyFruitAssignment();
   updateReadout();
 }
-
+ 
+function shuffleInPlace(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+ 
 function resetAll(){
   state.treeAngles = [0, 0];
   state.branchAssignments = [defaultBranchAssignment(), defaultBranchAssignment()];
@@ -778,7 +737,6 @@ function resetAll(){
   applyFruitAssignment();
   updateReadout();
 }
-
  
 /* ============================================================
    THREE.JS SCENE SETUP
@@ -973,7 +931,7 @@ function applyFruitAssignment(){
     });
   });
 }
-
+ 
 function applyTreeAngle(){
   trees.forEach((tree, i) => {
     tree.pivot.rotation.y = THREE.MathUtils.degToRad(state.treeAngles[i]);
@@ -1007,37 +965,11 @@ animate();
    UI WIRING
    ============================================================ */
  
-// function updateReadout(){
-//   const t = TRANSLATIONS[currentLang];
-//   document.getElementById('readout-angle').textContent = state.treeAngle + '°';
- 
-//   const wrap = document.getElementById('branch-readout');
-//   wrap.innerHTML = '';
-//   const sideLabels = ['A', 'B'];
- 
-//   state.branchAssignment.forEach((color, idx) => {
-//     const heightIdx = Math.floor(idx/2);
-//     const sideIdx = idx % 2;
-//     const slot = document.createElement('div');
-//     slot.className = 'branch-slot';
-//     const swatch = document.createElement('span');
-//     swatch.className = 'swatch ' + (color || 'empty');
-//     slot.appendChild(swatch);
-//     const label = document.createElement('span');
-//     const colorName = color
-//       ? (color === 'yellow' ? t.colorYellow : color === 'red' ? t.colorRed : t.colorGreen)
-//       : t.empty;
-//     label.textContent = `H${heightIdx+1}${sideLabels[sideIdx]} · ${colorName}`;
-//     slot.appendChild(label);
-//     wrap.appendChild(slot);
-//   });
-// }
-
-  function colorName(t, color){
+function colorName(t, color){
   if(!color) return t.empty;
   return color === 'yellow' ? t.colorYellow : color === 'red' ? t.colorRed : t.colorGreen;
 }
-
+ 
 function buildBranchGrid(assignment, t){
   const grid = document.createElement('div');
   grid.className = 'branch-grid';
@@ -1057,29 +989,29 @@ function buildBranchGrid(assignment, t){
   });
   return grid;
 }
-
+ 
 function updateReadout(){
   const t = TRANSLATIONS[currentLang];
   const wrap = document.getElementById('state-readout');
   wrap.innerHTML = '';
-
+ 
   if(state.independent){
     trees.forEach((tree, i) => {
       const angleRow = document.createElement('div');
       angleRow.className = 'readout';
       angleRow.innerHTML = `
         <div class="readout-row">
-          <span class="readout-label">${t.labelAngle.replace(/\s*\(.*\)$/, '')} — ${i+1}</span>
+          <span class="readout-label">${t.labelAngleTree} ${i+1}</span>
           <span class="readout-value">${state.treeAngles[i]}°</span>
         </div>`;
       wrap.appendChild(angleRow);
-
+ 
       const title = document.createElement('div');
       title.className = 'tree-block-title';
       title.style.marginTop = '10px';
-      title.textContent = `${t.labelBranch.split('(')[0].trim()} — ${i+1}`;
+      title.textContent = `${t.labelBranchTree} ${i+1}`;
       wrap.appendChild(title);
-
+ 
       wrap.appendChild(buildBranchGrid(state.branchAssignments[i], t));
     });
   } else {
@@ -1091,13 +1023,13 @@ function updateReadout(){
         <span class="readout-value">${state.treeAngles[0]}°</span>
       </div>`;
     wrap.appendChild(angleRow);
-
+ 
     const title = document.createElement('div');
     title.className = 'tree-block-title';
     title.style.marginTop = '10px';
     title.textContent = t.labelBranch;
     wrap.appendChild(title);
-
+ 
     wrap.appendChild(buildBranchGrid(state.branchAssignments[0], t));
   }
 }
