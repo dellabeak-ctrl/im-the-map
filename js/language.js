@@ -17,7 +17,8 @@ export function setLanguage(lang){
   const tabs = document.querySelectorAll('.tab[disabled]');
   tabs[0].textContent = t.tabGame2;
   tabs[1].textContent = t.tabGame3;
-
+   
+  document.getElementById('title-name').textContent           = t.title;
   document.getElementById('badge-mode').textContent           = t.badge;
   document.getElementById('hint-controls').textContent        = t.hint;
   document.getElementById('h2-orientation').textContent       = t.h2Orientation;
