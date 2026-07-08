@@ -4,6 +4,7 @@
 
 export const TRANSLATIONS = {
   en: {
+     title:          'ELEMENT RANDOMIZER',
     tabGame1:        'The Ripening Quest',
     tabGame2:        'Game 2',
     tabGame3:        'Game 3',
@@ -30,6 +31,7 @@ export const TRANSLATIONS = {
     langBtn:         'FR',
   },
   fr: {
+    title:           'RANDOMISEUR DES ACCESSOIRES',
     tabGame1:        'Titre Francaise ..?',
     tabGame2:        'Jeu 2',
     tabGame3:        'Jeu 3',
