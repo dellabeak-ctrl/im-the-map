@@ -33,7 +33,7 @@ export const TRANSLATIONS = {
   fr: {
     brand:           'RANDOMISEUR DES ACCESSOIRES',
     tabGame1:        'Titre Francaise ..?',
-    tabGame2:        'Je 2',
+    tabGame2:        'Jeu 2',
     tabGame3:        'Jeu 3',
     badge:           'Verger — Vue du terrain',
     hint:            'glisser pour orbiter · défiler pour zoomer · glisser à droite pour déplacer',
