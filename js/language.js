@@ -18,8 +18,10 @@ export function setLanguage(lang){
   tabs[0].textContent = t.tabGame2;
   tabs[1].textContent = t.tabGame3;
    
-  document.getElementById('brand-name').textContent           = t.brand;
-  document.getElementById('badge-mode').textContent           = t.badge;
+   document.getElementById('brand-word1').textContent = t.brandWord1;
+   document.getElementById('brand-word2').textContent = t.brandWord2;
+   document.title = t.pageTitle;  
+   document.getElementById('badge-mode').textContent           = t.badge;
   document.getElementById('hint-controls').textContent        = t.hint;
   document.getElementById('h2-orientation').textContent       = t.h2Orientation;
   document.getElementById('label-independent').textContent    = t.labelIndependent;
