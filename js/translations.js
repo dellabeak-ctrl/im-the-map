@@ -4,8 +4,10 @@
 
 export const TRANSLATIONS = {
   en: {
-     brand:          'ELEMENT RANDOMIZER',
-    tabGame1:        'The Ripening Quest',
+     brandWord1: 'ELEMENT',
+     brandWord2: 'RANDOMIZER',
+     pageTitle:  'Element Randomizer — Regionals 2027',    
+     tabGame1:        'The Ripening Quest',
     tabGame2:        'Game 2',
     tabGame3:        'Game 3',
     badge:           'Orchard — Field View',
@@ -31,7 +33,9 @@ export const TRANSLATIONS = {
     langBtn:         'FR',
   },
   fr: {
-    brand:           'RANDOMISEUR DES ACCESSOIRES',
+     brandWord1: 'RANDOMISEUR',
+     brandWord2: 'DES ACCESSOIRES',
+     pageTitle:  'Randomiseur des accessoires — Régionaux 2027',
     tabGame1:        'Titre Francaise ..?',
     tabGame2:        'Jeu 2',
     tabGame3:        'Jeu 3',
