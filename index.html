@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Element Randomizer — Regionals 2027</title>
+<style>
+  :root{
+    --ink: #1a1d1a;
+    --paper: #f7f5ef;
+    --panel: #ffffff;
+    --line: #d8d4c8;
+    --moss: #2f5d3a;
+    --moss-deep: #1f3f28;
+    --bark: #8a6a45;
+    --yellow: #e8c84a;
+    --red: #c2402f;
+    --green: #2f8f5b;
+    --focus: #2f5d3a;
+    --radius: 10px;
+  }
+
+  @font-face {
+    font-family: 'Qhytsdakx';
+    src: url('qhyts___.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Courier New', ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  body{ display:flex; flex-direction:column; }
+
+  /* ---------- Top bar / tabs ---------- */
+  .topbar{
+    display:flex;
+    align-items:flex-end;
+    gap: 2px;
+    padding: 18px 24px 0 24px;
+    background: var(--paper);
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .brand{
+    font-family: 'Qhytsdakx', Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 33px;
+    letter-spacing: 0.5px;
+    margin-right: 28px;
+    padding-bottom: 12px;
+    white-space: nowrap;
+  }
+  .brand .accent{ color: var(--red); }
+
+  .tabs{ display:flex; gap: 4px; flex: 1; }
+
+  .tab{
+    font-family: 'Qhytsdakx', Georgia, 'Times New Roman', serif;
+    font-size: 23px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 10px 18px 11px 18px;
+    color: #8a8678;
+    cursor: pointer;
+    transition: color .15s ease;
+  }
+  .tab[aria-selected="true"]{
+    color: var(--ink);
+    border-bottom-color: var(--red);
+    font-weight: 700;
+  }
+  .tab:not([aria-selected="true"]):hover{ color: var(--ink); }
+  .tab:disabled{ color: #c4c0b2; cursor: not-allowed; }
+  .tab:disabled:hover{ color: #c4c0b2; }
+  .tab .soon{ font-size: 9px; vertical-align: super; letter-spacing: 0; }
+  .tab:focus-visible{ outline: 2px solid var(--focus); outline-offset: -2px; }
+
+  .header-logo{ height: 52px; width: auto; margin-left: auto; margin-right: -8px; }
+
+  /* ---------- Language toggle ---------- */
+  .lang-toggle{
+    font-family: 'Courier New', ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: none;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    color: var(--ink);
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-left: 16px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+    transition: background .15s ease;
+  }
+  .lang-toggle:hover{ background: #eee9da; }
+  .lang-toggle:focus-visible{ outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ---------- Layout ---------- */
+  main{ flex: 1; display: flex; min-height: 0; }
+
+  /* Game panels — only active one shown */
+  .game-panel{ display: none; flex: 1; min-height: 0; }
+  .game-panel.active{ display: flex; }
+
+  .viewport-wrap{
+    flex: 1;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 20%, #eef0e6 0%, #e2e4d6 60%, #d6d8c6 100%);
+    min-width: 0;
+  }
+
+  .canvas-host{ position:absolute; inset:0; }
+
+  .viewport-hint{
+    position:absolute;
+    bottom: 14px; left: 14px;
+    font-size: 11px;
+    color: #6b6a5e;
+    background: rgba(247,245,239,0.85);
+    padding: 5px 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+
+  .mode-badge{
+    position:absolute;
+    top: 14px; left: 14px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6px 12px;
+    border-radius: var(--radius);
+  }
+
+  /* ---------- Side panel ---------- */
+  .panel{
+    width: 360px;
+    flex-shrink: 0;
+    background: var(--panel);
+    border-left: 3px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .panel-section{ padding: 20px 22px; border-bottom: 1px solid var(--line); }
+
+  .panel-section h2{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 15px;
+    margin: 0 0 14px 0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .panel-section h2 .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--moss);
+    display:inline-block;
+  }
+
+  .checkbox-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size: 12.5px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checkbox-row input[type="checkbox"]{
+    width: 15px; height: 15px;
+    accent-color: var(--moss);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .btn-row{ display:flex; flex-direction: column; gap: 10px; }
+
+  .btn{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 16px 16px;
+    border-radius: var(--radius);
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    transition: transform .08s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{ background: #eee9da; }
+  .btn:active{ transform: translateY(1px); }
+  .btn:focus-visible{ outline: 3px solid var(--focus); outline-offset: 2px; }
+  .btn .arrow{ font-size: 16px; opacity: .55; }
+
+  .btn.orientation{ border-color: var(--bark); }
+  .btn.orientation:hover{ background: #f1e7d8; }
+  .btn.fruit{ border-color: var(--moss); }
+  .btn.fruit:hover{ background: #e7efe5; }
+  .btn.object{ border-color: #5b6abf; }
+  .btn.object:hover{ background: #eaedf8; }
+  .btn.blocks{ border-color: var(--red); }
+  .btn.blocks:hover{ background: #f8eaea; }
+
+  .btn-sub{
+    font-weight: 400;
+    font-size: 11px;
+    color: #6b6a5e;
+    display:block;
+    margin-top: 3px;
+  }
+
+  /* ---------- State readout ---------- */
+  .readout{ font-size: 12.5px; line-height: 1.7; }
+
+  .readout-row{
+    display:flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px dotted var(--line);
+  }
+  .readout-row:last-child{ border-bottom:none; }
+  .readout-label{ color: #6b6a5e; }
+  .readout-value{ font-weight: 700; }
+
+  .tree-block{ margin-top: 10px; }
+  .tree-block-title{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b6a5e;
+    margin-bottom: 6px;
+  }
+
+  .branch-grid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+
+  .branch-slot{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: 11px;
+    padding: 5px 7px;
+    border-radius: 6px;
+    background: #f1efe6;
+    border: 1px solid var(--line);
+  }
+
+  /* block slots for game 2 */
+  .block-slots{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin-top: 8px; }
+  .block-slot{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: 11px;
+    padding: 5px 7px;
+    border-radius: 6px;
+    background: #f1efe6;
+    border: 1px solid var(--line);
+  }
+
+  .swatch{
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.25);
+  }
+  .swatch.empty{ background: transparent; border: 1px dashed #b4b0a0; }
+  .swatch.yellow{ background: var(--yellow); }
+  .swatch.red{ background: var(--red); }
+  .swatch.green{ background: var(--green); }
+
+  .reset-link{
+    margin-top: 14px;
+    font-size: 11px;
+    color: #8a8678;
+    background:none;
+    border:none;
+    text-decoration: underline;
+    cursor:pointer;
+    padding: 0;
+    font-family: inherit;
+  }
+  .reset-link:hover{ color: var(--ink); }
+  .reset-link:focus-visible{ outline: 2px solid var(--focus); outline-offset:2px; }
+
+  footer{ padding: 14px 22px; font-size: 10.5px; color: #8a8678; text-align:center; }
+
+  @media (max-width: 1100px) {
+    main{ flex-direction: column; }
+    .topbar{ padding: 10px 12px 0 12px; flex-wrap: nowrap; overflow: hidden; gap: 6px; align-items: center; }
+    .topbar img{ height: 28px; width: auto; }
+    .brand{ font-size: 13px; margin-right: 10px; padding-bottom: 8px; white-space: nowrap; }
+    .tabs{ gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar{ display: none; }
+    .tab{ font-size: 10px; padding: 6px 10px 8px 10px; white-space: nowrap; }
+    .lang-toggle{ font-size: 10px; padding: 4px 8px; margin-left: 6px; margin-bottom: 8px; }
+    .viewport-wrap{ height: 52vh; min-height: 280px; }
+    .mode-badge{ font-size: 9px; padding: 4px 8px; top: 8px; left: 8px; }
+    .viewport-hint{ font-size: 9px; padding: 4px 8px; bottom: 8px; left: 8px; }
+    .panel{ width: 100%; border-left: none; border-top: 3px solid var(--ink); max-height: 48vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .panel-section{ padding: 14px 16px; }
+    .panel-section h2{ font-size: 13px; margin-bottom: 10px; }
+    .btn{ font-size: 13px; padding: 14px 14px; min-height: 56px; }
+    .btn-sub{ font-size: 10px; }
+    .branch-grid{ grid-template-columns: 1fr 1fr; gap: 4px; }
+    .branch-slot{ font-size: 10px; padding: 4px 6px; }
+    .readout{ font-size: 11px; }
+    .readout-row{ padding: 4px 0; }
+    .tree-block-title{ font-size: 10px; }
+  }
+
+  @media (max-width: 390px) {
+    .brand{ font-size: 11px; }
+    .tab{ font-size: 9px; padding: 5px 8px 7px 8px; }
+    .branch-grid{ grid-template-columns: 1fr; }
+    .viewport-wrap{ height: 45vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">ELEMENT <span class="accent">RANDOMIZER</span></div>
+  <div class="tabs" role="tablist" aria-label="Challenge games">
+    <button class="tab" role="tab" aria-selected="true"  id="tab-game1">The Ripening Quest</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-game2">Game 2</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-game3" disabled title="Coming soon">Game 3</button>
+  </div>
+  <button class="lang-toggle" id="btn-lang">FR</button>
+  <img src="logo.png" alt="Logo" class="header-logo">
+</div>
+
+<main>
+
+  <!-- ===== GAME 1: The Ripening Quest ===== -->
+  <div class="game-panel active" id="panel-game1">
+    <div class="viewport-wrap">
+      <div class="mode-badge" id="badge-mode">Orchard — Field View</div>
+      <div class="canvas-host" id="canvas-host-1"></div>
+      <div class="viewport-hint" id="hint-controls">drag to orbit · scroll to zoom · right-drag to pan</div>
+    </div>
+    <aside class="panel">
+      <div class="panel-section">
+        <h2><span class="dot" style="background:var(--bark)"></span><span id="h2-orientation">Tree Orientation</span></h2>
+        <label class="checkbox-row" for="chk-independent">
+          <input type="checkbox" id="chk-independent">
+          <span id="label-independent">Randomize trees independently</span>
+        </label>
+        <div class="btn-row">
+          <button class="btn orientation" id="btn-orientation">
+            <span id="btn-orientation-label">Randomize Orientation<span class="btn-sub" id="btn-orientation-sub">Rotates trees · 0° / 90° / 180° / 270°</span></span>
+            <span class="arrow">↻</span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h2><span class="dot" style="background:var(--moss)"></span><span id="h2-fruit">Fruit Placement</span></h2>
+        <div class="btn-row">
+          <button class="btn fruit" id="btn-fruit">
+            <span id="btn-fruit-label">Randomize Fruit<span class="btn-sub" id="btn-fruit-sub">≥1 red/yellow per height · green doubles one height</span></span>
+            <span class="arrow">↻</span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-section" style="flex:1;">
+        <h2><span class="dot"></span><span id="h2-state">Current State</span></h2>
+        <div id="state-readout"></div>
+        <button class="reset-link" id="btn-reset">Reset</button>
+      </div>
+      <footer id="footer-text">Orchard · configuration tool</footer>
+    </aside>
+  </div>
+
+  <!-- ===== GAME 2 ===== -->
+  <div class="game-panel" id="panel-game2">
+    <div class="viewport-wrap">
+      <div class="mode-badge" id="g2-badge">Game 2 — Field View</div>
+      <div class="canvas-host" id="canvas-host-2"></div>
+      <div class="viewport-hint" id="g2-hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+    </div>
+    <aside class="panel">
+      <div class="panel-section">
+        <h2><span class="dot" style="background:#5b6abf"></span><span id="g2-h2-object">Object Position (B1–B4)</span></h2>
+        <div class="btn-row">
+          <button class="btn object" id="btn-g2-object">
+            <span id="btn-g2-object-label">Randomize Object Position<span class="btn-sub" id="btn-g2-object-sub">Places the double object in B1+B2, B2+B3, or B3+B4</span></span>
+            <span class="arrow">↻</span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h2><span class="dot" style="background:var(--red)"></span><span id="g2-h2-blocks">Block Placement (B5–B8)</span></h2>
+        <div class="btn-row">
+          <button class="btn blocks" id="btn-g2-blocks">
+            <span id="btn-g2-blocks-label">Randomize Blocks<span class="btn-sub" id="btn-g2-blocks-sub">Places red, green, yellow across B5–B8 · 1 spot empty</span></span>
+            <span class="arrow">↻</span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-section" style="flex:1;">
+        <h2><span class="dot"></span><span id="g2-h2-state">Current State</span></h2>
+        <div class="readout">
+          <div class="readout-row">
+            <span class="readout-label" id="g2-label-object">Object position</span>
+            <span class="readout-value" id="g2-readout-object">—</span>
+          </div>
+        </div>
+        <div class="tree-block">
+          <div class="tree-block-title" id="g2-label-blocks-title">Block assignment (B5–B8)</div>
+          <div class="block-slots" id="g2-block-readout"></div>
+        </div>
+        <button class="reset-link" id="btn-g2-reset">Reset</button>
+      </div>
+      <footer id="g2-footer">Game 2 · configuration tool</footer>
+    </aside>
+  </div>
+
+</main>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ============================================================
+   LANGUAGE
+   ============================================================ */
+
+const TRANSLATIONS = {
+  en: {
+    tabGame1: 'The Ripening Quest', tabGame2: 'Game 2', tabGame3: 'Game 3',
+    badge: 'Orchard — Field View',
+    hint: 'drag to orbit · scroll to zoom · right-drag to pan',
+    h2Orientation: 'Tree Orientation',
+    btnOrientation: 'Randomize Orientation',
+    btnOrientSub: 'Rotates trees · 0° / 90° / 180° / 270°',
+    h2Fruit: 'Fruit Placement', btnFruit: 'Randomize Fruit',
+    btnFruitSub: '≥1 red/yellow per height · green doubles one height',
+    h2State: 'Current State',
+    labelAngle: 'Tree angle (both trees)',
+    labelBranch: 'Branch assignment (applies to both trees)',
+    labelAngleTree: 'Tree angle — Tree',
+    labelBranchTree: 'Branch assignment — Tree',
+    labelIndependent: 'Randomize trees independently',
+    btnReset: 'Reset', footer: 'Orchard · configuration tool',
+    colorYellow: 'Yellow', colorRed: 'Red', colorGreen: 'Green', empty: 'empty',
+    langBtn: 'FR',
+    g2Badge: 'Game 2 — Field View',
+    g2Hint: 'drag to orbit · scroll to zoom · right-drag to pan',
+    g2H2Object: 'Object Position (B1–B4)',
+    g2BtnObject: 'Randomize Object Position',
+    g2BtnObjectSub: 'Places the double object in B1+B2, B2+B3, or B3+B4',
+    g2H2Blocks: 'Block Placement (B5–B8)',
+    g2BtnBlocks: 'Randomize Blocks',
+    g2BtnBlocksSub: 'Places red, green, yellow across B5–B8 · 1 spot empty',
+    g2H2State: 'Current State',
+    g2LabelObject: 'Object position',
+    g2LabelBlocks: 'Block assignment (B5–B8)',
+    g2BtnReset: 'Reset', g2Footer: 'Game 2 · configuration tool',
+  },
+  fr: {
+    tabGame1: 'La Quête de la Récolte', tabGame2: 'Jeu 2', tabGame3: 'Jeu 3',
+    badge: 'Verger — Vue du terrain',
+    hint: 'glisser pour orbiter · défiler pour zoomer · glisser à droite pour déplacer',
+    h2Orientation: 'Orientation des arbres',
+    btnOrientation: 'Randomiser orientation',
+    btnOrientSub: 'Tourne les arbres · 0° / 90° / 180° / 270°',
+    h2Fruit: 'Placement des fruits', btnFruit: 'Randomiser placement',
+    btnFruitSub: '≥1 rouge/jaune par hauteur · le vert double une hauteur',
+    h2State: 'État actuel',
+    labelAngle: 'Angle des arbres (les deux)',
+    labelBranch: 'Attribution des branches (les deux arbres)',
+    labelAngleTree: "Angle de l'arbre — Arbre",
+    labelBranchTree: 'Attribution des branches — Arbre',
+    labelIndependent: 'Randomiser les arbres indépendamment',
+    btnReset: 'Réinitialiser', footer: 'Verger · outil de configuration de manche',
+    colorYellow: 'Jaune', colorRed: 'Rouge', colorGreen: 'Vert', empty: 'vide',
+    langBtn: 'EN',
+    g2Badge: 'Jeu 2 — Vue du terrain',
+    g2Hint: 'glisser pour orbiter · défiler pour zoomer · glisser à droite pour déplacer',
+    g2H2Object: "Position de l'objet (B1–B4)",
+    g2BtnObject: 'Générer une position',
+    g2BtnObjectSub: "Place l'objet en B1+B2, B2+B3, ou B3+B4",
+    g2H2Blocks: 'Placement des blocs (B5–B8)',
+    g2BtnBlocks: 'Générer un placement',
+    g2BtnBlocksSub: 'Place rouge, vert, jaune en B5–B8 · 1 espace vide',
+    g2H2State: 'État actuel',
+    g2LabelObject: "Position de l'objet",
+    g2LabelBlocks: 'Attribution des blocs (B5–B8)',
+    g2BtnReset: 'Réinitialiser', g2Footer: 'Jeu 2 · outil de configuration de manche',
+  }
+};
+
+let currentLang = 'en';
+
+function setLanguage(lang){
+  currentLang = lang;
+  const t = TRANSLATIONS[lang];
+  document.documentElement.lang = lang;
+  document.getElementById('tab-game1').textContent = t.tabGame1;
+  document.getElementById('tab-game2').textContent = t.tabGame2;
+  document.getElementById('tab-game3').textContent = t.tabGame3;
+  document.getElementById('btn-lang').textContent  = t.langBtn;
+  document.getElementById('badge-mode').textContent         = t.badge;
+  document.getElementById('hint-controls').textContent      = t.hint;
+  document.getElementById('h2-orientation').textContent     = t.h2Orientation;
+  document.getElementById('label-independent').textContent  = t.labelIndependent;
+  document.getElementById('btn-orientation-sub').textContent = t.btnOrientSub;
+  document.getElementById('btn-orientation-label').childNodes[0].textContent = t.btnOrientation;
+  document.getElementById('h2-fruit').textContent           = t.h2Fruit;
+  document.getElementById('btn-fruit-sub').textContent      = t.btnFruitSub;
+  document.getElementById('btn-fruit-label').childNodes[0].textContent = t.btnFruit;
+  document.getElementById('h2-state').textContent           = t.h2State;
+  document.getElementById('btn-reset').textContent          = t.btnReset;
+  document.getElementById('footer-text').textContent        = t.footer;
+  document.getElementById('g2-badge').textContent           = t.g2Badge;
+  document.getElementById('g2-hint').textContent            = t.g2Hint;
+  document.getElementById('g2-h2-object').textContent       = t.g2H2Object;
+  document.getElementById('btn-g2-object-sub').textContent  = t.g2BtnObjectSub;
+  document.getElementById('btn-g2-object-label').childNodes[0].textContent = t.g2BtnObject;
+  document.getElementById('g2-h2-blocks').textContent       = t.g2H2Blocks;
+  document.getElementById('btn-g2-blocks-sub').textContent  = t.g2BtnBlocksSub;
+  document.getElementById('btn-g2-blocks-label').childNodes[0].textContent = t.g2BtnBlocks;
+  document.getElementById('g2-h2-state').textContent        = t.g2H2State;
+  document.getElementById('g2-label-object').textContent    = t.g2LabelObject;
+  document.getElementById('g2-label-blocks-title').textContent = t.g2LabelBlocks;
+  document.getElementById('btn-g2-reset').textContent       = t.g2BtnReset;
+  document.getElementById('g2-footer').textContent          = t.g2Footer;
+  updateReadout();
+  updateG2Readout();
+}
+
+document.getElementById('btn-lang').addEventListener('click', () => {
+  setLanguage(currentLang === 'en' ? 'fr' : 'en');
+});
+
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+
+function switchGame(n){
+  document.querySelectorAll('.game-panel').forEach((p, i) => {
+    p.classList.toggle('active', i + 1 === n);
+  });
+  document.getElementById('tab-game1').setAttribute('aria-selected', n === 1 ? 'true' : 'false');
+  document.getElementById('tab-game2').setAttribute('aria-selected', n === 2 ? 'true' : 'false');
+  window.dispatchEvent(new Event('resize'));
+}
+
+document.getElementById('tab-game1').addEventListener('click', () => switchGame(1));
+document.getElementById('tab-game2').addEventListener('click', () => switchGame(2));
+
+/* ============================================================
+   GAME 1 — CONSTANTS / STATE / RANDOMIZATION
+   ============================================================ */
+
+const COLS = 5, ROWS = 3;
+const CELL = 1.6;
+const MAT_W = COLS * CELL;
+const MAT_D = ROWS * CELL;
+
+const TREE_CELLS = [
+  { col: 1.25, row: 1 },
+  { col: 2.75, row: 1 }
+];
+
+const BRANCH_HEIGHTS = [0.55, 0.78, 1.01, 1.24];
+const BRANCH_LEN = 0.42;
+
+const state = {
+  independent: false,
+  treeAngles: [0, 0],
+  branchAssignments: [null, null]
+};
+
+function defaultBranchAssignment(){ return new Array(8).fill(null); }
+state.branchAssignments = [defaultBranchAssignment(), defaultBranchAssignment()];
+
+function shuffleInPlace(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function randomizeOrientation(){
+  const options = [0, 90, 180, 270];
+  if(state.independent){
+    state.treeAngles = trees.map(() => options[Math.floor(Math.random() * options.length)]);
+  } else {
+    const angle = options[Math.floor(Math.random() * options.length)];
+    state.treeAngles = [angle, angle];
+  }
+  applyTreeAngle();
+  updateReadout();
+}
+
+function generateFruitAssignment(){
+  const redYellow = ['yellow', 'yellow', 'red', 'red'];
+  shuffleInPlace(redYellow);
+  const next = new Array(8).fill(null);
+  for(let h = 0; h < 4; h++){
+    const side = Math.random() < 0.5 ? 0 : 1;
+    next[h*2 + side] = redYellow[h];
+  }
+  const greenHeight = Math.floor(Math.random() * 4);
+  const occupiedSide = next[greenHeight*2] !== null ? 0 : 1;
+  const openSide = occupiedSide === 0 ? 1 : 0;
+  next[greenHeight*2 + openSide] = 'green';
+  return next;
+}
+
+function randomizeFruit(){
+  if(state.independent){
+    state.branchAssignments = trees.map(() => generateFruitAssignment());
+  } else {
+    const assignment = generateFruitAssignment();
+    state.branchAssignments = [assignment.slice(), assignment.slice()];
+  }
+  applyFruitAssignment();
+  updateReadout();
+}
+
+function resetAll(){
+  state.treeAngles = [0, 0];
+  state.branchAssignments = [defaultBranchAssignment(), defaultBranchAssignment()];
+  applyTreeAngle();
+  applyFruitAssignment();
+  updateReadout();
+}
+
+/* ============================================================
+   GAME 2 — CONSTANTS / STATE / RANDOMIZATION
+   ============================================================ */
+
+const G2_MAT_W = 8.0;
+const G2_MAT_D = 3.9;
+
+// ⚠️ TUNE THESE: click on the mat in the 3D view to log coordinates.
+// Open the browser console, switch to Game 2, and click each B position
+// diamond on the mat — the x/z will print and you can update these values.
+const B_POSITIONS = {
+  B1: { x: -2.200, z:  0.468 },
+  B2: { x: -1.640, z:  0.858 },
+  B3: { x: -1.080, z:  1.170 },
+  B4: { x: -0.600, z:  1.482 },
+  B5: { x:  1.240, z: -0.858 },
+  B6: { x:  1.720, z: -1.170 },
+  B7: { x:  2.160, z: -1.443 },
+  B8: { x:  2.600, z: -1.677 },
+};
+
+const OBJECT_POSITIONS = [['B1','B2'], ['B2','B3'], ['B3','B4']];
+
+const g2state = {
+  objectPosition: null,
+  blockAssignment: { B5: null, B6: null, B7: null, B8: null }
+};
+
+function randomizeG2Object(){
+  g2state.objectPosition = OBJECT_POSITIONS[Math.floor(Math.random() * OBJECT_POSITIONS.length)];
+  applyG2Object();
+  updateG2Readout();
+}
+
+function randomizeG2Blocks(){
+  const slots = ['B5','B6','B7','B8'];
+  const colors = ['red','green','yellow'];
+  shuffleInPlace(slots);
+  shuffleInPlace(colors);
+  g2state.blockAssignment = { B5: null, B6: null, B7: null, B8: null };
+  colors.forEach((color, i) => { g2state.blockAssignment[slots[i]] = color; });
+  applyG2Blocks();
+  updateG2Readout();
+}
+
+function resetG2(){
+  g2state.objectPosition = null;
+  g2state.blockAssignment = { B5: null, B6: null, B7: null, B8: null };
+  applyG2Object();
+  applyG2Blocks();
+  updateG2Readout();
+}
+
+/* ============================================================
+   GAME 1 — THREE.JS SCENE
+   ============================================================ */
+
+const host1 = document.getElementById('canvas-host-1');
+const scene1 = new THREE.Scene();
+scene1.background = new THREE.Color(0xeceadf);
+scene1.fog = new THREE.Fog(0xeceadf, 9, 22);
+
+const camera1 = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+camera1.position.set(4.2, 4.0, 5.4);
+
+const renderer1 = new THREE.WebGLRenderer({ antialias: true });
+renderer1.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer1.shadowMap.enabled = true;
+renderer1.shadowMap.type = THREE.PCFSoftShadowMap;
+host1.appendChild(renderer1.domElement);
+
+const controls1 = new OrbitControls(camera1, renderer1.domElement);
+controls1.target.set(0, 0.3, 0);
+controls1.enableDamping = true; controls1.dampingFactor = 0.08;
+controls1.minDistance = 2.5; controls1.maxDistance = 14;
+controls1.maxPolarAngle = Math.PI * 0.49;
+
+scene1.add(new THREE.HemisphereLight(0xffffff, 0xb8b29a, 0.9));
+const sun1 = new THREE.DirectionalLight(0xfff4e0, 1.15);
+sun1.position.set(5, 8, 3); sun1.castShadow = true;
+sun1.shadow.mapSize.set(2048, 2048);
+sun1.shadow.camera.left = -6; sun1.shadow.camera.right = 6;
+sun1.shadow.camera.top = 6; sun1.shadow.camera.bottom = -6;
+sun1.shadow.camera.near = 1; sun1.shadow.camera.far = 20;
+scene1.add(sun1);
+const fill1 = new THREE.DirectionalLight(0xdce8ff, 0.35);
+fill1.position.set(-4, 3, -3); scene1.add(fill1);
+
+const matTexture = new THREE.TextureLoader().load('map.png');
+matTexture.colorSpace = THREE.SRGBColorSpace;
+const matMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(MAT_W, MAT_D),
+  new THREE.MeshStandardMaterial({ map: matTexture, roughness: 0.92 })
+);
+matMesh.rotation.x = -Math.PI/2;
+matMesh.receiveShadow = true;
+scene1.add(matMesh);
+
+const originX = -MAT_W/2, originZ = -MAT_D/2;
+function cellCenter(col, row){
+  return { x: originX + col*CELL + CELL/2, z: originZ + row*CELL + CELL/2 };
+}
+
+const barkMat   = new THREE.MeshStandardMaterial({ color: 0xb08a5a, roughness: 0.75 });
+const baseMat   = new THREE.MeshStandardMaterial({ color: 0xc9a876, roughness: 0.8  });
+const branchMat = new THREE.MeshStandardMaterial({ color: 0x8a6a45, roughness: 0.7  });
+const fruitColors = { yellow: 0xe8c84a, red: 0xc2402f, green: 0x2f8f5b };
+const trees = [];
+
+function buildTree(col, row){
+  const { x, z } = cellCenter(col, row);
+  const root = new THREE.Group(); root.position.set(x, 0, z); scene1.add(root);
+  const pivot = new THREE.Group(); root.add(pivot);
+  const baseSize = 0.5, baseHeight = 0.15;
+  const base = new THREE.Mesh(new THREE.BoxGeometry(baseSize, baseHeight, baseSize), baseMat);
+  base.position.y = baseHeight/2; base.castShadow = true; base.receiveShadow = true;
+  pivot.add(base);
+  const dowelHeight = 1.5, dowelRadius = 0.045;
+  const dowel = new THREE.Mesh(new THREE.CylinderGeometry(dowelRadius, dowelRadius, dowelHeight, 16), barkMat);
+  dowel.position.y = baseHeight + dowelHeight/2; dowel.castShadow = true; pivot.add(dowel);
+  const branchSlots = [];
+  BRANCH_HEIGHTS.forEach((hOffset, hIdx) => {
+    const y = baseHeight + hOffset;
+    const axisAngle = (hIdx % 2 === 0) ? 0 : Math.PI/2;
+    [1, -1].forEach((sideSign, sideIdx) => {
+      const dx = Math.cos(axisAngle)*sideSign, dz = Math.sin(axisAngle)*sideSign;
+      const branch = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, BRANCH_LEN, 10), branchMat);
+      branch.rotation.z = Math.PI/2; branch.rotation.y = -axisAngle;
+      branch.position.set(dx*BRANCH_LEN/2, y, dz*BRANCH_LEN/2);
+      branch.castShadow = true; pivot.add(branch);
+      const tip = new THREE.Group();
+      tip.position.set(dx*BRANCH_LEN, y, dz*BRANCH_LEN);
+      tip.rotation.y = -axisAngle - (sideSign===1 ? 0 : Math.PI);
+      pivot.add(tip);
+      branchSlots.push({ index: hIdx*2+sideIdx, tip, sideSign, axisAngle, fruitMesh: null });
+    });
+  });
+  trees.push({ root, pivot, branchSlots });
+}
+TREE_CELLS.forEach(c => buildTree(c.col, c.row));
+
+function makeFruitMesh(color){
+  const group = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.SphereGeometry(0.085, 16, 16),
+    new THREE.MeshStandardMaterial({ color: fruitColors[color], roughness: 0.55 })
+  );
+  body.castShadow = true; body.position.set(0, -0.13, 0.03); group.add(body);
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.012, 0.012, 0.12, 8),
+    new THREE.MeshStandardMaterial({ color: 0x5a7a4a, roughness: 0.6 })
+  );
+  stem.position.set(0, -0.05, 0.01); stem.rotation.z = 0.25; group.add(stem);
+  return group;
+}
+
+function applyFruitAssignment(){
+  trees.forEach((tree, i) => {
+    const assignment = state.branchAssignments[i];
+    tree.branchSlots.forEach(slot => {
+      if(slot.fruitMesh){ slot.tip.remove(slot.fruitMesh); slot.fruitMesh = null; }
+      const color = assignment[slot.index];
+      if(color){ const mesh = makeFruitMesh(color); slot.tip.add(mesh); slot.fruitMesh = mesh; }
+    });
+  });
+}
+
+function applyTreeAngle(){
+  trees.forEach((tree, i) => {
+    tree.pivot.rotation.y = THREE.MathUtils.degToRad(state.treeAngles[i]);
+  });
+}
+
+applyTreeAngle();
+applyFruitAssignment();
+
+/* ============================================================
+   GAME 2 — THREE.JS SCENE
+   ============================================================ */
+
+const host2 = document.getElementById('canvas-host-2');
+const scene2 = new THREE.Scene();
+scene2.background = new THREE.Color(0xeceadf);
+scene2.fog = new THREE.Fog(0xeceadf, 12, 28);
+
+const camera2 = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+camera2.position.set(0, 6.5, 7.0);
+
+const renderer2 = new THREE.WebGLRenderer({ antialias: true });
+renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer2.shadowMap.enabled = true;
+renderer2.shadowMap.type = THREE.PCFSoftShadowMap;
+host2.appendChild(renderer2.domElement);
+
+const controls2 = new OrbitControls(camera2, renderer2.domElement);
+controls2.target.set(0, 0, 0);
+controls2.enableDamping = true; controls2.dampingFactor = 0.08;
+controls2.minDistance = 3; controls2.maxDistance = 18;
+controls2.maxPolarAngle = Math.PI * 0.49;
+
+scene2.add(new THREE.HemisphereLight(0xffffff, 0xb8b29a, 0.9));
+const sun2 = new THREE.DirectionalLight(0xfff4e0, 1.15);
+sun2.position.set(5, 8, 3); sun2.castShadow = true;
+sun2.shadow.mapSize.set(2048, 2048);
+sun2.shadow.camera.left = -8; sun2.shadow.camera.right = 8;
+sun2.shadow.camera.top = 6; sun2.shadow.camera.bottom = -6;
+sun2.shadow.camera.near = 1; sun2.shadow.camera.far = 24;
+scene2.add(sun2);
+const fill2 = new THREE.DirectionalLight(0xdce8ff, 0.35);
+fill2.position.set(-4, 3, -3); scene2.add(fill2);
+
+const tex2 = new THREE.TextureLoader().load('mat2.png');
+tex2.colorSpace = THREE.SRGBColorSpace;
+const g2matMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(G2_MAT_W, G2_MAT_D),
+  new THREE.MeshStandardMaterial({ map: tex2, roughness: 0.92 })
+);
+g2matMesh.rotation.x = -Math.PI/2;
+g2matMesh.receiveShadow = true;
+scene2.add(g2matMesh);
+
+// Small white diamond markers at each B position for visual reference
+const diamondMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+Object.values(B_POSITIONS).forEach(pos => {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.05, 0.18), diamondMat);
+  m.position.set(pos.x, 0.04, pos.z);
+  m.rotation.y = Math.PI/4;
+  scene2.add(m);
+});
+
+// Double-wide object: a bar with end caps
+const g2objMat = new THREE.MeshStandardMaterial({ color: 0x4a5ab0, roughness: 0.5 });
+const g2capMat = new THREE.MeshStandardMaterial({ color: 0x2a3a80, roughness: 0.4 });
+const g2bar  = new THREE.Mesh(new THREE.BoxGeometry(1, 0.18, 0.18), g2objMat);
+const g2capA = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.22), g2capMat);
+const g2capB = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.22), g2capMat);
+g2bar.castShadow = true; g2capA.castShadow = true; g2capB.castShadow = true;
+g2bar.visible = false; g2capA.visible = false; g2capB.visible = false;
+scene2.add(g2bar); scene2.add(g2capA); scene2.add(g2capB);
+
+function applyG2Object(){
+  const pos = g2state.objectPosition;
+  if(!pos){
+    g2bar.visible = false; g2capA.visible = false; g2capB.visible = false;
+    return;
+  }
+  const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
+  const midX = (pA.x + pB.x)/2, midZ = (pA.z + pB.z)/2;
+  const dx = pB.x - pA.x, dz = pB.z - pA.z;
+  const len = Math.sqrt(dx*dx + dz*dz);
+  const angle = Math.atan2(dx, dz);
+  g2bar.position.set(midX, 0.12, midZ);
+  g2bar.scale.x = len;
+  g2bar.rotation.y = angle;
+  g2bar.visible = true;
+  g2capA.position.set(pA.x, 0.12, pA.z); g2capA.visible = true;
+  g2capB.position.set(pB.x, 0.12, pB.z); g2capB.visible = true;
+}
+
+// Colored blocks for B5–B8
+const blockColors3d = { red: 0xc2402f, green: 0x2f8f5b, yellow: 0xe8c84a };
+const g2blocks = {};
+['B5','B6','B7','B8'].forEach(name => {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.28, 0.28, 0.28),
+    new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.5 })
+  );
+  mesh.castShadow = true; mesh.visible = false;
+  mesh.position.set(B_POSITIONS[name].x, 0.17, B_POSITIONS[name].z);
+  scene2.add(mesh);
+  g2blocks[name] = mesh;
+});
+
+function applyG2Blocks(){
+  ['B5','B6','B7','B8'].forEach(name => {
+    const color = g2state.blockAssignment[name];
+    const mesh = g2blocks[name];
+    if(color){
+      mesh.material.color.setHex(blockColors3d[color]);
+      mesh.visible = true;
+    } else {
+      mesh.visible = false;
+    }
+  });
+}
+
+applyG2Object();
+applyG2Blocks();
+
+// ── Coordinate logger ─────────────────────────────────────────
+// Click anywhere on the game 2 mat to log world X/Z to the console.
+// Open DevTools (F12) → Console, switch to Game 2, click each B
+// position on the mat, copy the printed values into B_POSITIONS above.
+// Remove this block once coordinates are dialled in.
+renderer2.domElement.addEventListener('click', (e) => {
+  const rect = renderer2.domElement.getBoundingClientRect();
+  const mouse = new THREE.Vector2(
+    ((e.clientX - rect.left) / rect.width)  * 2 - 1,
+    -((e.clientY - rect.top)  / rect.height) * 2 + 1
+  );
+  const ray = new THREE.Raycaster();
+  ray.setFromCamera(mouse, camera2);
+  const hits = ray.intersectObject(g2matMesh);
+  if(hits.length > 0){
+    const p = hits[0].point;
+    console.log(`x: ${p.x.toFixed(3)}, z: ${p.z.toFixed(3)}`);
+  }
+});
+// ─────────────────────────────────────────────────────────────
+
+/* ============================================================
+   RESIZE / RENDER LOOP
+   ============================================================ */
+
+function resize(){
+  const w1 = host1.clientWidth, h1 = host1.clientHeight;
+  if(w1 > 0 && h1 > 0){
+    camera1.aspect = w1/h1; camera1.updateProjectionMatrix(); renderer1.setSize(w1, h1);
+  }
+  const w2 = host2.clientWidth, h2 = host2.clientHeight;
+  if(w2 > 0 && h2 > 0){
+    camera2.aspect = w2/h2; camera2.updateProjectionMatrix(); renderer2.setSize(w2, h2);
+  }
+}
+window.addEventListener('resize', resize);
+resize();
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls1.update(); controls2.update();
+  renderer1.render(scene1, camera1);
+  renderer2.render(scene2, camera2);
+}
+animate();
+
+/* ============================================================
+   UI WIRING — GAME 1
+   ============================================================ */
+
+function colorName(t, color){
+  if(!color) return t.empty;
+  return color==='yellow' ? t.colorYellow : color==='red' ? t.colorRed : t.colorGreen;
+}
+
+function buildBranchGrid(assignment, t){
+  const grid = document.createElement('div');
+  grid.className = 'branch-grid';
+  const sideLabels = ['A','B'];
+  assignment.forEach((color, idx) => {
+    const heightIdx = Math.floor(idx/2), sideIdx = idx%2;
+    const slot = document.createElement('div'); slot.className = 'branch-slot';
+    const swatch = document.createElement('span');
+    swatch.className = 'swatch ' + (color||'empty'); slot.appendChild(swatch);
+    const label = document.createElement('span');
+    label.textContent = `H${heightIdx+1}${sideLabels[sideIdx]} · ${colorName(t, color)}`;
+    slot.appendChild(label); grid.appendChild(slot);
+  });
+  return grid;
+}
+
+function updateReadout(){
+  const t = TRANSLATIONS[currentLang];
+  const wrap = document.getElementById('state-readout');
+  wrap.innerHTML = '';
+  if(state.independent){
+    trees.forEach((tree, i) => {
+      const angleRow = document.createElement('div');
+      angleRow.className = 'readout';
+      angleRow.innerHTML = `<div class="readout-row">
+        <span class="readout-label">${t.labelAngleTree} ${i+1}</span>
+        <span class="readout-value">${state.treeAngles[i]}°</span></div>`;
+      wrap.appendChild(angleRow);
+      const title = document.createElement('div');
+      title.className = 'tree-block-title';
+      title.style.marginTop = '10px';
+      title.textContent = `${t.labelBranchTree} ${i+1}`;
+      wrap.appendChild(title);
+      wrap.appendChild(buildBranchGrid(state.branchAssignments[i], t));
+    });
+  } else {
+    const angleRow = document.createElement('div');
+    angleRow.className = 'readout';
+    angleRow.innerHTML = `<div class="readout-row">
+      <span class="readout-label">${t.labelAngle}</span>
+      <span class="readout-value">${state.treeAngles[0]}°</span></div>`;
+    wrap.appendChild(angleRow);
+    const title = document.createElement('div');
+    title.className = 'tree-block-title';
+    title.style.marginTop = '10px';
+    title.textContent = t.labelBranch;
+    wrap.appendChild(title);
+    wrap.appendChild(buildBranchGrid(state.branchAssignments[0], t));
+  }
+}
+
+document.getElementById('btn-orientation').addEventListener('click', randomizeOrientation);
+document.getElementById('btn-fruit').addEventListener('click', randomizeFruit);
+document.getElementById('btn-reset').addEventListener('click', resetAll);
+document.getElementById('chk-independent').addEventListener('change', (e) => {
+  state.independent = e.target.checked;
+  updateReadout();
+});
+
+/* ============================================================
+   UI WIRING — GAME 2
+   ============================================================ */
+
+function updateG2Readout(){
+  const t = TRANSLATIONS[currentLang];
+  document.getElementById('g2-readout-object').textContent =
+    g2state.objectPosition ? g2state.objectPosition.join(' + ') : '—';
+  const wrap = document.getElementById('g2-block-readout');
+  wrap.innerHTML = '';
+  ['B5','B6','B7','B8'].forEach(name => {
+    const color = g2state.blockAssignment[name];
+    const slot = document.createElement('div'); slot.className = 'block-slot';
+    const swatch = document.createElement('span');
+    swatch.className = 'swatch ' + (color||'empty'); slot.appendChild(swatch);
+    const label = document.createElement('span');
+    label.textContent = `${name} · ${colorName(t, color)}`;
+    slot.appendChild(label); wrap.appendChild(slot);
+  });
+}
+
+document.getElementById('btn-g2-object').addEventListener('click', randomizeG2Object);
+document.getElementById('btn-g2-blocks').addEventListener('click', randomizeG2Blocks);
+document.getElementById('btn-g2-reset').addEventListener('click', resetG2);
+
+updateReadout();
+updateG2Readout();
+</script>
+
+</body>
+</html>
