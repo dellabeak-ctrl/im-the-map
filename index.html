@@ -932,17 +932,6 @@ function applyG2Object(){
   g2plank.visible = true;
 }
 
-  // Position boxes at each B slot
-  g2boxA.position.set(pA.x, 0.22, pA.z); g2boxA.visible = true;
-  g2boxB.position.set(pB.x, 0.22, pB.z); g2boxB.visible = true;
-
-  // Rod runs between them, rotated to align
-  g2rod.position.set(midX, 0.22, midZ);
-  g2rod.scale.y = len; // stretch to span the distance
-  g2rod.rotation.z = Math.PI / 2; // lay it on its side
-  g2rod.rotation.y = angle;       // face the right direction
-  g2rod.visible = true;
-}
 
 // Colored blocks for B5–B8
 const blockColors3d = { red: 0xc2402f, green: 0x2f8f5b, yellow: 0xe8c84a };
