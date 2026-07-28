@@ -895,7 +895,7 @@ const g2objMat = new THREE.MeshStandardMaterial({ color: 0x4a5ab0, roughness: 0.
 
 const g2boxA  = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2objMat);
 const g2boxB  = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2objMat);
-const g2plank = new THREE.Mesh(new THREE.BoxGeometry(1, 0.12, 0.12), g2objMat);
+const g2plank = new THREE.Mesh(new THREE.BoxGeometry(1, 0.30, 0.10), g2objMat);
 
 g2boxA.castShadow  = true; g2boxB.castShadow  = true; g2plank.castShadow = true;
 g2boxA.visible = false; g2boxB.visible = false; g2plank.visible = false;
@@ -913,7 +913,11 @@ function applyG2Object(){
   const len = Math.sqrt(dx*dx + dz*dz);
   const angle = Math.atan2(dx, dz);
 
-  // Boxes sit at each B position
+  // Direction perpendicular to the line between boxes (the "back" direction)
+  const perpX = -Math.cos(angle);
+  const perpZ =  Math.sin(angle);
+
+  // Boxes at each B position, rotated to face along the path
   g2boxA.position.set(pA.x, 0.22, pA.z);
   g2boxA.rotation.y = angle;
   g2boxA.visible = true;
@@ -922,12 +926,12 @@ function applyG2Object(){
   g2boxB.rotation.y = angle;
   g2boxB.visible = true;
 
-  // Plank runs between the back faces of the two boxes, thin and flat
-  // Offset backward (relative to the line between boxes) by half a box depth
-  const backOffsetX = Math.sin(angle) * 0.20;
-  const backOffsetZ = Math.cos(angle) * 0.20;
-  g2plank.position.set(midX - backOffsetX, 0.22, midZ - backOffsetZ);
-  g2plank.scale.x = len + 0.40; // span full width including box thickness
+  // Plank sits across the back faces of both boxes
+  // Offset by half box depth in the perpendicular direction
+  const plankX = midX + perpX * 0.20;
+  const plankZ = midZ + perpZ * 0.20;
+  g2plank.position.set(plankX, 0.22, plankZ);
+  g2plank.scale.set(len + 0.40, 1, 1);
   g2plank.rotation.y = angle;
   g2plank.visible = true;
 }
