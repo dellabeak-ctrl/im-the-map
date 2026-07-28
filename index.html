@@ -890,33 +890,58 @@ Object.values(B_POSITIONS).forEach(pos => {
   scene2.add(m);
 });
 
-// Double-wide object: a bar with end caps
+// Double-wide object: two boxes connected by a flat plank across their backs
 const g2objMat = new THREE.MeshStandardMaterial({ color: 0x4a5ab0, roughness: 0.5 });
-const g2capMat = new THREE.MeshStandardMaterial({ color: 0x2a3a80, roughness: 0.4 });
-const g2bar  = new THREE.Mesh(new THREE.BoxGeometry(1, 0.18, 0.18), g2objMat);
-const g2capA = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.22), g2capMat);
-const g2capB = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.22), g2capMat);
-g2bar.castShadow = true; g2capA.castShadow = true; g2capB.castShadow = true;
-g2bar.visible = false; g2capA.visible = false; g2capB.visible = false;
-scene2.add(g2bar); scene2.add(g2capA); scene2.add(g2capB);
+
+const g2boxA  = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2objMat);
+const g2boxB  = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2objMat);
+const g2plank = new THREE.Mesh(new THREE.BoxGeometry(1, 0.12, 0.12), g2objMat);
+
+g2boxA.castShadow  = true; g2boxB.castShadow  = true; g2plank.castShadow = true;
+g2boxA.visible = false; g2boxB.visible = false; g2plank.visible = false;
+scene2.add(g2boxA); scene2.add(g2boxB); scene2.add(g2plank);
 
 function applyG2Object(){
   const pos = g2state.objectPosition;
   if(!pos){
-    g2bar.visible = false; g2capA.visible = false; g2capB.visible = false;
+    g2boxA.visible = false; g2boxB.visible = false; g2plank.visible = false;
     return;
   }
   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
-  const midX = (pA.x + pB.x)/2, midZ = (pA.z + pB.z)/2;
+  const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
   const dx = pB.x - pA.x, dz = pB.z - pA.z;
   const len = Math.sqrt(dx*dx + dz*dz);
   const angle = Math.atan2(dx, dz);
-  g2bar.position.set(midX, 0.12, midZ);
-  g2bar.scale.x = len;
-  g2bar.rotation.y = angle;
-  g2bar.visible = true;
-  g2capA.position.set(pA.x, 0.12, pA.z); g2capA.visible = true;
-  g2capB.position.set(pB.x, 0.12, pB.z); g2capB.visible = true;
+
+  // Boxes sit at each B position
+  g2boxA.position.set(pA.x, 0.22, pA.z);
+  g2boxA.rotation.y = angle;
+  g2boxA.visible = true;
+
+  g2boxB.position.set(pB.x, 0.22, pB.z);
+  g2boxB.rotation.y = angle;
+  g2boxB.visible = true;
+
+  // Plank runs between the back faces of the two boxes, thin and flat
+  // Offset backward (relative to the line between boxes) by half a box depth
+  const backOffsetX = Math.sin(angle) * 0.20;
+  const backOffsetZ = Math.cos(angle) * 0.20;
+  g2plank.position.set(midX - backOffsetX, 0.22, midZ - backOffsetZ);
+  g2plank.scale.x = len + 0.40; // span full width including box thickness
+  g2plank.rotation.y = angle;
+  g2plank.visible = true;
+}
+
+  // Position boxes at each B slot
+  g2boxA.position.set(pA.x, 0.22, pA.z); g2boxA.visible = true;
+  g2boxB.position.set(pB.x, 0.22, pB.z); g2boxB.visible = true;
+
+  // Rod runs between them, rotated to align
+  g2rod.position.set(midX, 0.22, midZ);
+  g2rod.scale.y = len; // stretch to span the distance
+  g2rod.rotation.z = Math.PI / 2; // lay it on its side
+  g2rod.rotation.y = angle;       // face the right direction
+  g2rod.visible = true;
 }
 
 // Colored blocks for B5–B8
