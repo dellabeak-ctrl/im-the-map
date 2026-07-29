@@ -900,7 +900,7 @@ g2group.visible = false;
 scene2.add(g2group);
 
 const loader = new GLTFLoader();
-loader.load('connector.glb', (gltf) => {
+loader.load('scene.glb', (gltf) => {
   g2group.add(gltf.scene);
   // Adjust scale if needed — start with 1 and tune from there
   gltf.scene.scale.set(1, 1, 1);
