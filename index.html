@@ -890,53 +890,46 @@ Object.values(B_POSITIONS).forEach(pos => {
   scene2.add(m);
 });
 
-// Double-wide object: two boxes connected by a flat plank across their backs
-const g2objMat = new THREE.MeshStandardMaterial({ color: 0x4a5ab0, roughness: 0.5 });
+// Double-wide object: two cubes connected by a thin axle on their SW-facing sides
+const g2cubeMat = new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.6 });
+const g2axleMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.4 });
 
-const g2boxA  = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2objMat);
-const g2boxB  = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2objMat);
-const g2plank = new THREE.Mesh(new THREE.BoxGeometry(1, 0.30, 0.10), g2objMat);
+const g2group = new THREE.Group();
+g2group.visible = false;
+scene2.add(g2group);
 
-g2boxA.castShadow  = true; g2boxB.castShadow  = true; g2plank.castShadow = true;
-g2boxA.visible = false; g2boxB.visible = false; g2plank.visible = false;
-scene2.add(g2boxA); scene2.add(g2boxB); scene2.add(g2plank);
+const g2cubeA = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2cubeMat);
+const g2cubeB = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2cubeMat);
+const g2axle  = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 10), g2axleMat);
+
+g2cubeA.castShadow = true; g2cubeB.castShadow = true; g2axle.castShadow = true;
+g2group.add(g2cubeA); g2group.add(g2cubeB); g2group.add(g2axle);
 
 function applyG2Object(){
   const pos = g2state.objectPosition;
-  if(!pos){
-    g2boxA.visible = false; g2boxB.visible = false; g2plank.visible = false;
-    return;
-  }
+  if(!pos){ g2group.visible = false; return; }
+
   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
   const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
   const dx = pB.x - pA.x, dz = pB.z - pA.z;
   const len = Math.sqrt(dx*dx + dz*dz);
   const angle = Math.atan2(dx, dz);
 
-  // Direction perpendicular to the line between boxes (the "back" direction)
-  const perpX = -Math.cos(angle);
-  const perpZ =  Math.sin(angle);
+  // Whole group sits at midpoint, rotated to align with the B-B path
+  g2group.position.set(midX, 0.22, midZ);
+  g2group.rotation.y = angle;
+  g2group.visible = true;
 
-  // Boxes at each B position, rotated to face along the path
-  g2boxA.position.set(pA.x, 0.22, pA.z);
-  g2boxA.rotation.y = angle;
-  g2boxA.visible = true;
+  // Cubes at each end along the local X axis
+  g2cubeA.position.set(-len/2, 0, 0);
+  g2cubeB.position.set( len/2, 0, 0);
 
-  g2boxB.position.set(pB.x, 0.22, pB.z);
-  g2boxB.rotation.y = angle;
-  g2boxB.visible = true;
-
-  // Plank sits across the back faces of both boxes
-  // Offset by half box depth in the perpendicular direction
-  const plankX = midX + perpX * 0.20;
-  const plankZ = midZ + perpZ * 0.20;
-  g2plank.position.set(plankX, 0.22, plankZ);
-  g2plank.scale.set(len + 0.40, 1, 1);
-  g2plank.rotation.y = angle;
-  g2plank.visible = true;
+  // Axle runs between them, lying horizontally along local X,
+  // offset to the SW-facing side (negative Z in local space)
+  g2axle.scale.y = len;
+  g2axle.rotation.z = Math.PI / 2; // lay the cylinder on its side along X
+  g2axle.position.set(0, 0, -0.20); // offset to the back face
 }
-
-
 // Colored blocks for B5–B8
 const blockColors3d = { red: 0xc2402f, green: 0x2f8f5b, yellow: 0xe8c84a };
 const g2blocks = {};
