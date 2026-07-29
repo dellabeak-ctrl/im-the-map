@@ -452,6 +452,7 @@
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /* ============================================================
    LANGUAGE
@@ -898,12 +899,12 @@ const g2group = new THREE.Group();
 g2group.visible = false;
 scene2.add(g2group);
 
-const g2cubeA = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2cubeMat);
-const g2cubeB = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.40, 0.40), g2cubeMat);
-const g2axle  = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 10), g2axleMat);
-
-g2cubeA.castShadow = true; g2cubeB.castShadow = true; g2axle.castShadow = true;
-g2group.add(g2cubeA); g2group.add(g2cubeB); g2group.add(g2axle);
+const loader = new GLTFLoader();
+loader.load('connector.glb', (gltf) => {
+  g2group.add(gltf.scene);
+  // Adjust scale if needed — start with 1 and tune from there
+  gltf.scene.scale.set(1, 1, 1);
+});
 
 function applyG2Object(){
   const pos = g2state.objectPosition;
@@ -911,8 +912,6 @@ function applyG2Object(){
 
   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
   const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
-  const dx = pB.x - pA.x, dz = pB.z - pA.z;
-  const len = Math.sqrt(dx*dx + dz*dz);
   const angle = Math.atan2(dx, dz);
 
   // Whole group sits at midpoint, rotated to align with the B-B path
@@ -920,15 +919,15 @@ function applyG2Object(){
   g2group.rotation.y = angle;
   g2group.visible = true;
 
-  // Cubes at each end along the local X axis
-  g2cubeA.position.set(-len/2, 0, 0);
-  g2cubeB.position.set( len/2, 0, 0);
+  // // Cubes at each end along the local X axis
+  // g2cubeA.position.set(-len/2, 0, 0);
+  // g2cubeB.position.set( len/2, 0, 0);
 
-  // Axle runs between them, lying horizontally along local X,
-  // offset to the SW-facing side (negative Z in local space)
-  g2axle.scale.y = len;
-  g2axle.rotation.z = Math.PI / 2; // lay the cylinder on its side along X
-  g2axle.position.set(0, 0, -0.20); // offset to the back face
+  // // Axle runs between them, lying horizontally along local X,
+  // // offset to the SW-facing side (negative Z in local space)
+  // g2axle.scale.y = len;
+  // g2axle.rotation.z = Math.PI / 2; // lay the cylinder on its side along X
+  // g2axle.position.set(0, 0, -0.20); // offset to the back face
 }
 // Colored blocks for B5–B8
 const blockColors3d = { red: 0xc2402f, green: 0x2f8f5b, yellow: 0xe8c84a };
