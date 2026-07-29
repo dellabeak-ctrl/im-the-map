@@ -912,6 +912,7 @@ function applyG2Object(){
 
   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
   const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
+  const dx = pB.x - pA.x, dz = pB.z - pA.z;
   const angle = Math.atan2(dx, dz);
 
   // Whole group sits at midpoint, rotated to align with the B-B path
