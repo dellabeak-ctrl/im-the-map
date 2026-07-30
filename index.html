@@ -903,7 +903,7 @@ const loader = new GLTFLoader();
 loader.load('scene.glb', (gltf) => {
   g2group.add(gltf.scene);
   // Adjust scale if needed — start with 1 and tune from there
-  gltf.scene.scale.set(1, 1, 1);
+  gltf.scene.scale.set(0.1, 0.1, 0.1);
 });
 
 function applyG2Object(){
@@ -916,7 +916,7 @@ function applyG2Object(){
   const angle = Math.atan2(dx, dz);
 
   // Whole group sits at midpoint, rotated to align with the B-B path
-  g2group.position.set(midX, 0.22, midZ);
+  g2group.position.set(midX, -0.22, midZ);
   g2group.rotation.y = angle;
   g2group.visible = true;
 
