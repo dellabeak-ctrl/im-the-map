@@ -887,7 +887,7 @@ const diamondMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 
 Object.values(B_POSITIONS).forEach(pos => {
   const m = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.05, 0.18), diamondMat);
   m.position.set(pos.x, 0.04, pos.z);
-  m.rotation.y = (Math.PI/4;
+  m.rotation.y = (3 * Math.PI)/4;
   scene2.add(m);
 });
 
