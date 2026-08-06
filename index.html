@@ -910,11 +910,15 @@ function applyG2Object(){
   const pos = g2state.objectPosition;
   if(!pos){ g2group.visible = false; return; }
 
-  const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
-  const midX = (pA.x + pB.x) / 2.1, midZ = (pA.z + pB.z) / 2.1;
-  const dx = pB.x - pA.x, dz = pB.z - pA.z;
-  // const angle = Math.atan2(dz, dx);
-  const angle = (3 * Math.PI) /4;
+  // const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
+  // const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
+  // const dx = pB.x - pA.x, dz = pB.z - pA.z;
+  // // const angle = Math.atan2(dz, dx);
+  // const angle = (3 * Math.PI) /4;
+
+  g2group.position.set(pA.x, 0, pA.z);
+  g2group.rotation.y = (3 * Math.PI) / 4;
+  g2group.visible = true;
 
   
 
