@@ -912,13 +912,19 @@ function applyG2Object(){
 
   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
 
+  
+  const midX = (pA.x + pB.x) / 2;
+  const midZ = (pA.z + pB.z) / 2;
+
+  g2group.position.set(midX, 0, midZ);
+
   // const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
   // const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
   // const dx = pB.x - pA.x, dz = pB.z - pA.z;
   // // const angle = Math.atan2(dz, dx);
   // const angle = (3 * Math.PI) /4;
 
-  g2group.position.set(pA.x, 0, pA.z);
+  // g2group.position.set(pA.x, 0, pA.z);
   g2group.rotation.y = (3 * Math.PI) / 4;
   g2group.visible = true;
 
