@@ -917,24 +917,48 @@ function applyG2Object(){
   if(!pos){ g2group.visible = false; return; }
 
   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
+  const dx = pB.x - pA.x, dz = pB.z - pA.z;
+  const len = Math.sqrt(dx*dx + dz*dz);
+
+  // Place group at pA, rotated to face pB
+  g2group.position.set(pA.x, 0, pA.z);
+  g2group.rotation.y = (3 * Math.PI) / 4;
+
+  // Shift the loaded model inside the group by half the span
+  // so one end sits on pA and the other on pB
+  if(g2group.children[0]){
+    g2group.children[0].position.set(len / 2, 0, 0);
+  }
+
+  g2group.visible = true;
+}
+
+
 
   
-  const midX = (pA.x + pB.x) / 2;
-  const midZ = (pA.z + pB.z) / 2;
+// function applyG2Object(){
+//   const pos = g2state.objectPosition;
+//   if(!pos){ g2group.visible = false; return; }
 
-  g2group.position.set(midX, 0, midZ);
+//   const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
 
-  // const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
-  // const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
-  // const dx = pB.x - pA.x, dz = pB.z - pA.z;
-  // // const angle = Math.atan2(dz, dx);
-  // const angle = (3 * Math.PI) /4;
+  
+//   const midX = (pA.x + pB.x) / 2;
+//   const midZ = (pA.z + pB.z) / 2;
 
-  // g2group.position.set(pA.x, 0, pA.z);
-  g2group.rotation.y = (3 * Math.PI) / 4;
-  g2group.visible = true;
+//   g2group.position.set(midX, 0, midZ);
 
-}
+//   // const pA = B_POSITIONS[pos[0]], pB = B_POSITIONS[pos[1]];
+//   // const midX = (pA.x + pB.x) / 2, midZ = (pA.z + pB.z) / 2;
+//   // const dx = pB.x - pA.x, dz = pB.z - pA.z;
+//   // // const angle = Math.atan2(dz, dx);
+//   // const angle = (3 * Math.PI) /4;
+
+//   // g2group.position.set(pA.x, 0, pA.z);
+//   g2group.rotation.y = (3 * Math.PI) / 4;
+//   g2group.visible = true;
+
+// }
 
   // Whole group sits at midpoint, rotated to align with the B-B path
   // g2group.position.set(midX, 0.06, midZ);
