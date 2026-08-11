@@ -633,74 +633,73 @@ function randomizeOrientation(){
   updateReadout();
 }
 
-// function generateFruitAssignment(){
-//   const redYellow = ['yellow', 'yellow', 'red', 'red'];
-//   shuffleInPlace(redYellow);
-//   const next = new Array(8).fill(null);
-//   for(let h = 0; h < 4; h++){
-//     const side = Math.random() < 0.5 ? 0 : 1;
-//     next[h*2 + side] = redYellow[h];
-//   }
-//   const greenHeight = Math.floor(Math.random() * 4);
-//   const occupiedSide = next[greenHeight*2] !== null ? 0 : 1;
-//   const openSide = occupiedSide === 0 ? 1 : 0;
-//   next[greenHeight*2 + openSide] = 'green';
-//   return next;
+
+// function generateFruitAssignment(composition){
+//   // composition is an array of 4 colors e.g. ['red','red','yellow','green']
+//   // Constraints:
+//   //   - H1 (branches 0,1): exactly 1 fruit, 1 empty
+//   //   - H4 (branches 6,7): at least 1 red or yellow
+//   //   - H2 (branches 2,3) and H3 (branches 4,5): fully free
+//   //   - Total: 4 fruits placed across 8 branches
+
+//   let result;
+//   let attempts = 0;
+
+//   do {
+//     result = new Array(8).fill(null);
+//     const pool = [...composition];
+//     shuffleInPlace(pool);
+
+//     // H1: exactly one branch gets a fruit, the other stays empty
+//     const h1Side = Math.random() < 0.5 ? 0 : 1;
+//     result[h1Side] = pool.pop();
+
+//     // H2 and H3: freely assign remaining fruits to any of the 4 slots
+//     // (we have 3 fruits left for 6 slots across H2/H3/H4)
+//     // First place one on H4 to satisfy the constraint, then distribute the rest
+//     const h4Side = Math.random() < 0.5 ? 6 : 7;
+//     result[h4Side] = pool.pop();
+
+//     // Place remaining 2 fruits freely across H2, H3, and the other H4 slot
+//     const freeSlotsAll = [2, 3, 4, 5, h4Side === 6 ? 7 : 6];
+//     shuffleInPlace(freeSlotsAll);
+//     pool.forEach((color, i) => { result[freeSlotsAll[i]] = color; });
+
+//     attempts++;
+//   } while(
+//     // Verify H4 has a red or yellow (it should by construction, but double-check)
+//     !(result[6] === 'red' || result[6] === 'yellow' ||
+//       result[7] === 'red' || result[7] === 'yellow') &&
+//     attempts < 100
+//   );
+
+//   return result;
 // }
 
 function generateFruitAssignment(composition){
-  // composition is an array of 4 colors e.g. ['red','red','yellow','green']
-  // Constraints:
-  //   - H1 (branches 0,1): exactly 1 fruit, 1 empty
-  //   - H4 (branches 6,7): at least 1 red or yellow
-  //   - H2 (branches 2,3) and H3 (branches 4,5): fully free
-  //   - Total: 4 fruits placed across 8 branches
+  const pool = [...composition];
+  shuffleInPlace(pool);
+  const result = new Array(8).fill(null);
 
-  let result;
-  let attempts = 0;
+  // H1: exactly one branch gets a fruit, one stays empty
+  const h1Side = Math.random() < 0.5 ? 0 : 1;
+  result[h1Side] = pool.pop();
 
-  do {
-    result = new Array(8).fill(null);
-    const pool = [...composition];
-    shuffleInPlace(pool);
+  // H4: must get a red or yellow — find one in the remaining pool
+  const ryIndex = pool.findIndex(c => c === 'red' || c === 'yellow');
+  const h4Color = pool.splice(ryIndex, 1)[0];
+  const h4Side = Math.random() < 0.5 ? 6 : 7;
+  result[h4Side] = h4Color;
 
-    // H1: exactly one branch gets a fruit, the other stays empty
-    const h1Side = Math.random() < 0.5 ? 0 : 1;
-    result[h1Side] = pool.pop();
-
-    // H2 and H3: freely assign remaining fruits to any of the 4 slots
-    // (we have 3 fruits left for 6 slots across H2/H3/H4)
-    // First place one on H4 to satisfy the constraint, then distribute the rest
-    const h4Side = Math.random() < 0.5 ? 6 : 7;
-    result[h4Side] = pool.pop();
-
-    // Place remaining 2 fruits freely across H2, H3, and the other H4 slot
-    const freeSlotsAll = [2, 3, 4, 5, h4Side === 6 ? 7 : 6];
-    shuffleInPlace(freeSlotsAll);
-    pool.forEach((color, i) => { result[freeSlotsAll[i]] = color; });
-
-    attempts++;
-  } while(
-    // Verify H4 has a red or yellow (it should by construction, but double-check)
-    !(result[6] === 'red' || result[6] === 'yellow' ||
-      result[7] === 'red' || result[7] === 'yellow') &&
-    attempts < 100
-  );
+  // H2 and H3: place remaining 2 fruits freely across the 6 slots
+  const freeSlots = [2, 3, 4, 5, h4Side === 6 ? 7 : 6];
+  shuffleInPlace(freeSlots);
+  pool.forEach((color, i) => { result[freeSlots[i]] = color; });
 
   return result;
 }
-
   
-// function randomizeFruit(){
-//   if(state.independent){
-//     state.branchAssignments = trees.map(() => generateFruitAssignment());
-//   } else {
-//     const assignment = generateFruitAssignment();
-//     state.branchAssignments = [assignment.slice(), assignment.slice()];
-//   }
-//   applyFruitAssignment();
-//   updateReadout();
-// }
+
 
 
 function randomizeFruit(){
