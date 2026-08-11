@@ -343,7 +343,7 @@
 <body>
 
 <div class="topbar">
-  <div class="brand">ELEMENT <span class="accent">RANDOMIZER</span></div>
+  <div class="brand"><span id="brand-word1">ELEMENT</span> <span class="accent" id="brand-word2">RANDOMIZER</span></div>  
   <div class="tabs" role="tablist" aria-label="Challenge games">
     <button class="tab" role="tab" aria-selected="true"  id="tab-game1">The Ripening Quest</button>
     <button class="tab" role="tab" aria-selected="false" id="tab-game2">Game 2</button>
@@ -460,7 +460,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const TRANSLATIONS = {
   en: {
-    tabGame1: 'The c00l Quest', tabGame2: 'Game 2', tabGame3: 'Game 3',
+    brandWord1: 'ELEMENT',
+    brandWord2: 'RANDOMIZER',
+    tabGame1: 'The Ripening Quest', tabGame2: 'Game 2', tabGame3: 'Game 3',
     badge: 'Orchard — Field View',
     hint: 'drag to orbit · scroll to zoom · right-drag to pan',
     h2Orientation: 'Tree Orientation',
@@ -491,7 +493,9 @@ const TRANSLATIONS = {
     g2BtnReset: 'Reset', g2Footer: 'Game 2 · configuration tool',
   },
   fr: {
-    tabGame1: 'La Quête de la Récolte', tabGame2: 'Jeu 2', tabGame3: 'Jeu 3',
+    brandWord1: 'RANDOMISEUR',
+    brandWord2: "D'ÉLÉMENTS",
+    tabGame1: 'Titre Francais??', tabGame2: 'Jeu 2', tabGame3: 'Jeu 3',
     badge: 'Verger — Vue du terrain',
     hint: 'glisser pour orbiter · défiler pour zoomer · glisser à droite pour déplacer',
     h2Orientation: 'Orientation des arbres',
@@ -529,6 +533,8 @@ function setLanguage(lang){
   currentLang = lang;
   const t = TRANSLATIONS[lang];
   document.documentElement.lang = lang;
+  document.getElementById('brand-word1').textContent = t.brandWord1;
+  document.getElementById('brand-word2').textContent = t.brandWord2;
   document.getElementById('tab-game1').textContent = t.tabGame1;
   document.getElementById('tab-game2').textContent = t.tabGame2;
   document.getElementById('tab-game3').textContent = t.tabGame3;
