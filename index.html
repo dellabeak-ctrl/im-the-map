@@ -972,9 +972,28 @@ scene2.add(g2group);
 
 const loader = new GLTFLoader();
 loader.load('scene.glb', (gltf) => {
-  g2group.add(gltf.scene);
   // Adjust scale if needed — start with 1 and tune from there
   gltf.scene.scale.set(0.28, 0.28, 0.28);
+
+  // Recenter the model so the midpoint between BoxA and BoxB sits at the
+  // group origin — that way the group position (midpoint of the two B spots)
+  // is exactly where the two cubes straddle, regardless of the GLB's origin.
+  gltf.scene.updateMatrixWorld(true);
+  const boxA = gltf.scene.getObjectByName('BoxA');
+  const boxB = gltf.scene.getObjectByName('BoxB');
+  const center = new THREE.Vector3();
+  if(boxA && boxB){
+    const a = new THREE.Vector3(), b = new THREE.Vector3();
+    boxA.getWorldPosition(a);
+    boxB.getWorldPosition(b);
+    center.addVectors(a, b).multiplyScalar(0.5);
+  } else {
+    new THREE.Box3().setFromObject(gltf.scene).getCenter(center);
+  }
+  // Keep the model's bottom resting on the mat
+  const minY = new THREE.Box3().setFromObject(gltf.scene).min.y;
+  gltf.scene.position.set(-center.x, -minY, -center.z);
+  g2group.add(gltf.scene);
 });
 
 function applyG2Object(){
@@ -988,13 +1007,6 @@ function applyG2Object(){
 
   g2group.position.set(midX, 0, midZ);
   g2group.rotation.y = (3 * Math.PI) / 4;
-
-  // Offset the model inside the group to compensate for its off-center origin
-  // so the midpoint between the two cubes lands exactly at midX/midZ
-  if(g2group.children[0]){
-    g2group.children[0].position.set(0.6925, -0.024, -0.017);
-  }
-
   g2group.visible = true;
 }
 
